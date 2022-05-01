@@ -12,7 +12,7 @@
 }
 
 
-.title{ 
+.title-board{ 
     padding-bottom: 25px;
 }
 
@@ -24,4 +24,26 @@
 .align-right{
     float: right;
     padding-right: 10px;
+}
+
+
+a {
+    text-decoration: none !important;
+}
+
+.center {
+    float: center;
+    align-items: center;
+    text-align: center;
+  
+}
+
+.card-registration .select-input.form-control[readonly]:not([disabled]) {
+font-size: 1rem;
+line-height: 2.15;
+padding-left: .75em;
+padding-right: .75em;
+}
+.card-registration .select-arrow {
+top: 13px;
 }

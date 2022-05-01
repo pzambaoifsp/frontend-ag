@@ -1,92 +1,95 @@
-import React, { Component } from "react";
-import "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../style/signinform.css";
 import { GoogleLoginButton } from "react-social-login-buttons";
-class SignInForm extends Component {
-  constructor() {
-    super();
+import api from "../services/api";
 
-    this.state = {
-      login: "",
-      password: ""
-    };
+function SignInForm(){
+  const navigate = useNavigate();
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  handleChange(event) {
-    let target = event.target;
-    let value = target.type === "checkbox" ? target.checked : target.value;
-    let name = target.name;
-
-    this.setState({
-      [name]: value
-    });
-  }
-
-  handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log("The form was submitted with the following data:");
-    console.log(this.state);
-  }
+    const params = new URLSearchParams();
 
-  render() {
-    return (
+    params.append("email", email);
+    params.append("password", password);
+
+    try {
+      const response = await api.post("/auth/login", params);
+
+      const data = response.data;
       
-      <div className="appForm">
-        <h1 className="center">Login</h1>
-        <div className="formCenter">
-          <form className="formFields" onSubmit={this.handleSubmit}>
-            <div className="formField">
-              <label className="formFieldLabel" htmlFor="login">
-                Login
-              </label>
-              <input
-                type="login"
-                id="login"
-                className="formFieldInput"
-                placeholder="Digite o seu login"
-                name="login"
-                value={this.state.login}
-                onChange={this.handleChange}
-              />
-            </div>
+      // Extrair os token
+      const accessToken = data.data["access_token"];
+      const refreshToken = data.data["refresh_token"];
 
-            <div className="formField">
-              <label className="formFieldLabel" htmlFor="password">
-                Senha
-              </label>
-              <input
-                type="password"
-                id="password"
-                className="formFieldInput"
-                placeholder="Digite a sua senha"
-                name="password"
-                value={this.state.password}
-                onChange={this.handleChange}
-              />
-            </div>
+      // Salvar os tokens
+      localStorage.setItem("access_token", accessToken);
+      localStorage.setItem("refresh_token", refreshToken);
 
-            <div className="formField">
-              <button className="btn btn-block btn-primary" ><a href="/boards" className="twhite">Acessar</a></button>
-            </div>
-
-            <div className="formField center">
-              <span>— Ou utilize a sua conta acadêmia —</span>
-            </div>
-
-            <div className="socialMediaButtons">
-              <div className="googleButton">
-                <GoogleLoginButton onClick={() => alert("Hello")}/>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
+      // Redirecionar
+      navigate("/boards")
+      
+    } catch(error) {
+      console.log(`Erro ao realizar login: ${error.message}`);
+    }
   }
+  return (
+    <div className="appForm">
+      <h1 className="center">Login</h1>
+      <div className="formCenter">
+        <form className="formFields" onSubmit={handleSubmit}>
+          <div className="formField">
+            <label className="formFieldLabel" htmlFor="email">
+              Login
+            </label>
+            <input
+              type="text"
+              id="email"
+              className="formFieldInput"
+              placeholder="Digite o seu login"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="formField">
+            <label className="formFieldLabel" htmlFor="password">
+              Senha
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="formFieldInput"
+              placeholder="Digite a sua senha"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div className="formField">
+            <button type="submit" className="btn btn-block btn-primary">Acessar</button>
+          </div>
+
+          <div className="formField center">
+            <span>— Ou utilize a sua conta acadêmia —</span>
+          </div>
+
+          <div className="socialMediaButtons">
+            <div className="googleButton">
+              <GoogleLoginButton/>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default SignInForm;

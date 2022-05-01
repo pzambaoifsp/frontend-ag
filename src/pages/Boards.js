@@ -1,10 +1,18 @@
 import React, { Component } from "react";
+import { Navigate } from "react-router-dom";
+import "../style/boards.css";
 
+function Boards() {
+  
+    const handleDeslog = async (event) => {
+     
+        localStorage.removeItem("access_token")
+        localStorage.removeItem("refresh_token")
 
-class Boards extends Component {
+        Navigate("/login");
+    }
 
-    render() {
-        return ( 
+    return ( 
             <div>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="container">
@@ -21,20 +29,21 @@ class Boards extends Component {
                             </ul>
                             <form className="form-inline my-2 my-md-0">
                               <a className="nav-link twhite" href="/login">Login</a>
+                              <a className="nav-link twhite" onClick={ () => handleDeslog() } href="/login">Deslogar</a>
                             </form>
                         </div>
                     </div>
                 </nav>
 
                 <div className="container align-center">
-                  <h1 className="center title">Bancas Cadastradas</h1>
-                  <a href='/details' class='align-right'>Adicionar nova Banca</a>
-                  <table className="table table-hover">
+                  <h1 className="center title-board">Bancas Cadastradas</h1>
+                  <a href='/details' className='align-right add-mb'><i className="fa-solid fa-plus"></i> Adicionar nova Banca</a>
+                  <table className="table table-hover table-boards">
                     <thead>
                       <tr>
                         <th scope="col">#</th>
                         <th scope="col">Banca</th>
-                        <th scope="col">Alunos</th>
+                        <th scope="col">Grupo</th>
                         <th scope="col">Orientador</th>
                         <th scope="col">Status</th>
                         <th scope="col">Apresentação</th>
@@ -47,36 +56,35 @@ class Boards extends Component {
                         <td>Examinador1, Examinador2, Examinador3..</td>
                         <td>Aluno1, Aluno2, Aluno3..</td>
                         <td>Robson</td>
-                        <td>Em avaliação</td>
+                        <td className="st-status"><span className="st-progress">Em avaliação</span></td>
                         <td>18/06/2022</td>
-                        <td><a href="/details" className="tblack">Visualizar</a></td>
+                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i>Visualizar</a></td>
                       </tr>
                       <tr>
                         <th scope="row">2</th>
                         <td>Examinador4, Examinador5, Examinador6..</td>
                         <td>Aluno4, Aluno5, Aluno6..</td>
                         <td>Giovane</td>
-                        <td>Avaliado</td>
+                        <td className="st-status"><span className="st-success">Avaliado</span></td>
                         <td>20/06/2022</td>
-                        <td><a href="/details" className="tblack">Visualizar</a></td>
+                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i>Visualizar</a></td>
                       </tr>
                       <tr>
                         <th scope="row">3</th>
                         <td>Examinador7, Examinador8, Examinador9..</td>
                         <td>Aluno7, Aluno8, Aluno9..</td>
                         <td>Rodrigo</td>
-                        <td>Esperando Apresentação</td>
+                        <td className="st-status"><span className="st-waiting">Em espera</span></td>
                         <td>25/06/2022</td>
-                        <td><a href="/details" className="tblack">Visualizar</a></td>
+                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i>Visualizar</a></td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-
             </div>
 
         );
     }
-}
+
 
 export default Boards;

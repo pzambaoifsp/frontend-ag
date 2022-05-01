@@ -509,7 +509,7 @@
   }
   @media (min-width: 1200px) {
     .container {
-      max-width: 1140px;
+      max-width: 1340px;
     }
   }
   .container-fluid {
@@ -4013,7 +4013,6 @@
     word-wrap: break-word;
     background-color: #fff;
     background-clip: border-box;
-    border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.25rem;
   }
   .card > hr {

@@ -109,7 +109,7 @@
     border-bottom: 1px solid #445366;
     font-size: 1em;
     font-weight: 300;
-    padding-bottom: 10px;
+    padding-bottom: 3px;
     margin-top: 10px;
   }
   
@@ -160,14 +160,7 @@
   .socialMediaButtons {
     padding: 10px -3px 10px -30px;
   }
-  
-  .center {
-    float: center;
-    align-items: center;
-    text-align: center;
-  
-  }
-  
+    
   .btn {
     display: inline-block;
     cursor: pointer;

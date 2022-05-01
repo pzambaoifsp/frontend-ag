@@ -6,7 +6,6 @@ export function Home() {
   const handleGoToLogin = () => {
     navigate('/login');
   }
-  
 
   return (
     <button onClick={handleGoToLogin}>Realizar login</button>

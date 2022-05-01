@@ -1,17 +1,20 @@
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Home } from "../pages/Home";
 import SignInForm from "../pages/SignInForm";
 import Boards from "../pages/Boards";
 import Details from '../pages/Details';
+import ProtectedRoute from "../components/ProtectedRoute";
+import "../style/fontawesome/css/all.css";
+import UnprotectedRoute from "../components/UnprotectedRoute";
 
 export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />}/>
-        <Route path="/login" element={<SignInForm />} />
-        <Route path="/boards" element={<Boards /> }/>
-        <Route path="/details" element={<Details />} />
+        <Route path="/login" element={<UnprotectedRoute component={SignInForm} redirect="/boards"/>}/>
+        <Route path="/boards" element={<ProtectedRoute component={Boards} redirect="/login"/>}/>
+        <Route path="/details" element={<ProtectedRoute component={Details} redirect="/login"/>}/>
       </Routes>
     </BrowserRouter>
   )
