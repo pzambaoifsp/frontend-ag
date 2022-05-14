@@ -6,6 +6,7 @@ import Details from '../pages/Details';
 import ProtectedRoute from "../components/ProtectedRoute";
 import "../style/fontawesome/css/all.css";
 import UnprotectedRoute from "../components/UnprotectedRoute";
+import Confirm from "../pages/Confirm";
 
 export function AppRoutes() {
   return (
@@ -15,6 +16,7 @@ export function AppRoutes() {
         <Route path="/login" element={<UnprotectedRoute component={SignInForm} redirect="/boards"/>}/>
         <Route path="/boards" element={<ProtectedRoute component={Boards} redirect="/login"/>}/>
         <Route path="/details" element={<ProtectedRoute component={Details} redirect="/login"/>}/>
+        <Route path="/confirm" element={<ProtectedRoute component={Confirm} redirect="/login"/>}/>
       </Routes>
     </BrowserRouter>
   )

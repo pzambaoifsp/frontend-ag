@@ -22,43 +22,37 @@ function Details(){
     const [tipoBanca, setTipoBanca] = useState("");
     const [tema, setTema] = useState("");
     const [dataAgendamento, setDataAgendamento] = useState("");
-    const [dataCadastro, setDataCadastro] = useState("");
     const [listaIdParticipantes, setListaIdParticipantes] = useState("");
     const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
     const [statusAgendamento, setStatusAgendamento] = useState("");
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        const params = new URLSearchParams();
-
-        params.append("titulo", titulo);
-        params.append("descricao", descricao);
-        params.append("tipoBanca", tipoBanca);
-        params.append("tema", tema);
-        params.append("dataAgendamento", dataAgendamento);
-        params.append("dataCadastro", dataCadastro);
-        params.append("listaIdParticipantes", listaIdParticipantes);
-        params.append("listaIdAvaliadores", listaIdAvaliadores);
-        params.append("statusAgendamento", statusAgendamento);
-
         
         try {
 
-            const token = "Barer " + localStorage.getItem("refresh_token"); 
+            const token = "Barer " + localStorage.getItem("access_token"); 
             console.log(token)   
 
-            const response = await api.post("/agendamentos", params, {
-                method: 'POST',
-                headers: new Headers({
-                    Authorization: token,
-                }),
-            });
+            const response = await api.post("/agendamentos", { 
+                    titulo,
+                    descricao,
+                    tipoBanca,
+                    tema,
+                    dataAgendamento: dataAgendamento + ' 00:00',
+                    listaIdParticipantes: [parseInt(listaIdParticipantes)],
+                    listaIdAvaliadores: [parseInt(listaIdAvaliadores)],
+                    statusAgendamento
+                },{
+                headers: {
+                    "Authorization": token
+                }}
+            );
 
             navigate("/boards")
         
         } catch(error) {
-        console.log(`Erro ao realizar login: ${error.message}`);
+            console.log(`Erro ao realizar login: ${error.message}`);
         }
     }
 
@@ -88,26 +82,26 @@ function Details(){
             <div className="page-wrapper">
                 <div className="wrapper wrapper--w900">
                     <div className="card card-6">
-                        <div className="card-body">
+                        <div className="card-body"> 
                             <form method="POST" onSubmit={handleSubmit}>
                                 <div className="form-row">
                                     <div className="name">Título</div>
                                     <div className="value">
-                                        <input className="input--style-6" type="text" name="full_name" onChange={(e) => setTitulo(e.target.value)}/>
+                                        <input className="input--style-6" type="text" name="full_name" value={titulo} onChange={(e) => setTitulo(e.target.value)}/>
                                     </div>
                                 </div>
                                 <div className="form-row">
                                     <div className="name">Descrição</div>
                                     <div className="value">
                                         <div className="input-group">
-                                            <textarea className="textarea--style-6" name="message" placeholder="" onChange={(e) => setDescricao(e.target.value)}></textarea>
+                                            <textarea className="textarea--style-6" name="message" placeholder="" value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="form-row">
                                     <div className="name">Tipo de Banca</div>
                                     <div className="value">
-                                    <select className="input--style-6 form-control" onChange={(e) => setTipoBanca(e.target.value)}>
+                                    <select className="input--style-6 form-control" value={tipoBanca} onChange={(e) => setTipoBanca(e.target.value)}>
                                         <option value="TCC_CURSO_TECNICO">TCC Curso Técnico</option>
                                         <option value="TCC_CURSO_SUPERIOR">TCC Curso Superior</option>
                                         <option value="MONOGRAFIA_SUPERIOR">Monografia Curso</option>
@@ -117,25 +111,19 @@ function Details(){
                                 <div className="form-row">
                                     <div className="name">Tema</div>
                                     <div className="value">
-                                        <input className="input--style-6" type="text" name="full_name" onChange={(e) => setTema(e.target.value)}/>
+                                        <input className="input--style-6" type="text" name="full_name" value={tema} onChange={(e) => setTema(e.target.value)}/>
                                     </div>
                                 </div> 
                                 <div className="form-row">
                                 <div className="name">Data de Agendamento</div>
                                 <div className="value form-outline">
-                                    <input placeholder='' type="date" id="" className="input--style-6 form-control" onChange={(e) => setDataAgendamento(e.target.value)}/>
-                                </div>
-                                </div>
-                                <div className="form-row">
-                                <div className="name">Data de Cadastro</div>
-                                <div className="value form-outline">
-                                    <input placeholder='' type="date" id="" className="input--style-6 form-control" onChange={(e) => setDataCadastro(e.target.value)}/>
+                                    <input placeholder='' type="date" id="" className="input--style-6 form-control" value={dataAgendamento} onChange={(e) => setDataAgendamento(e.target.value)}/>
                                 </div>
                                 </div>
                                 <div className="form-row">
                                     <div className="name">Participantes</div>
                                     <div className="value">
-                                    <select className="input-group form-control" onChange={(e) => setListaIdParticipantes(e.target.value)}>
+                                    <select className="input-group form-control" value={listaIdParticipantes} onChange={(e) => setListaIdParticipantes(e.target.value)}>
                                         <option value="1">Participantes</option>
                                         <option value="2">teste2</option>
                                     </select>
@@ -144,7 +132,7 @@ function Details(){
                                 <div className="form-row">
                                     <div className="name">Avaliadores</div>
                                     <div className="value">
-                                    <select className="input-group form-control" onChange={(e) => setListaIdAvaliadores(e.target.value)}>
+                                    <select className="input-group form-control" value={listaIdAvaliadores} onChange={(e) => setListaIdAvaliadores(e.target.value)}>
                                         <option value="1">Avaliadores</option>
                                         <option value="2">Testes</option>
                                     </select>
@@ -153,7 +141,7 @@ function Details(){
                                 <div className="form-row">
                                 <div className="name">Status Agendamento</div>
                                 <div className="value">
-                                    <select className="input-group form-control" onChange={(e) => setStatusAgendamento(e.target.value)}>
+                                    <select className="input-group form-control" value={statusAgendamento} onChange={(e) => setStatusAgendamento(e.target.value)}>
                                         <option value="AGENDADO">Agendado</option>
                                         <option value="AGUARDANDO">Aguardando</option>
                                         <option value="CANCELADO">Cancelado</option>
@@ -172,7 +160,7 @@ function Details(){
                                     </div>
                                 </div>*/}
                                 <div className="card-footer">
-                                <button className="btn btn--radius-2 btn--blue-2">Salvar</button>
+                                <button type="submit" className="btn btn--radius-2 btn--blue-2">Salvar</button>
                                 {/* onClick={event =>  window.location.href='./boards'} */}
                                 </div>
                             </form>

@@ -32,7 +32,7 @@ function SignInForm(){
       localStorage.setItem("refresh_token", refreshToken);
 
       // Redirecionar
-      navigate("/boards")
+      navigate("/confirm")
       
     } catch(error) {
       console.log(`Erro ao realizar login: ${error.message}`);
