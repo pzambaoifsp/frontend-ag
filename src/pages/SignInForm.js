@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/signinform.css";
-import { GoogleLoginButton } from "react-social-login-buttons";
 import api from "../services/api";
 
 function SignInForm(){
@@ -9,6 +8,10 @@ function SignInForm(){
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleGoToCreate = async (event) => {
+    navigate("/signUp")
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,7 +35,7 @@ function SignInForm(){
       localStorage.setItem("refresh_token", refreshToken);
 
       // Redirecionar
-      navigate("/confirm")
+      navigate("/boards")
       
     } catch(error) {
       console.log(`Erro ao realizar login: ${error.message}`);
@@ -76,17 +79,15 @@ function SignInForm(){
           <div className="formField">
             <button type="submit" className="btn btn-block btn-primary">Acessar</button>
           </div>
-
-          <div className="formField center">
-            <span>— Ou utilize a sua conta acadêmia —</span>
-          </div>
-
-          <div className="socialMediaButtons">
-            <div className="googleButton">
-              <GoogleLoginButton/>
-            </div>
-          </div>
         </form>
+        <div className="formField center">
+          <span>— Não possui acesso? Crie uma conta agora mesmo! —</span>
+        </div>
+
+        <div className="formField">
+          <button type="submit" className="btn btn-block btn-primary" id="createAccount" onClick={handleGoToCreate}>Registrar-se</button>
+        </div>
+        
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { Navigate } from "react-router-dom";
+import api from "../services/api";
 import "../style/boards.css";
 
 function Boards() {
-  
+
     const handleDeslog = async (event) => {
      
         localStorage.removeItem("access_token")
@@ -12,8 +13,35 @@ function Boards() {
         Navigate("/login");
     }
 
+    const handleListAgendamentos = async (event) => {
+      event.preventDefault();
+
+      try{
+          const token = "Bearer " + localStorage.getItem("access_token");
+
+          const response = await api.get("/agendamentos",{
+                headers: {
+                  'Authorization': token,
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          console.log(response.data.data[0].agendamento);
+          
+
+          
+      } catch(error) {
+          console.log(`Erro ao carregar agendamentos: ${error.message}`);
+      }
+  }
+
+
+
     return ( 
             <div>
+                <div className="formFieldEC">
+                    <button type="button" className="btn btn-block btn-primary" onClick={handleListAgendamentos}>Acessar</button>
+                </div>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="container">
                         <a className="navbar-brand" href="/">Calendário</a>
@@ -34,6 +62,7 @@ function Boards() {
                         </div>
                     </div>
                 </nav>
+                
 
                 <div className="container align-center">
                   <h1 className="center title-board">Bancas Cadastradas</h1>
@@ -47,7 +76,7 @@ function Boards() {
                         <th scope="col">Orientador</th>
                         <th scope="col">Status</th>
                         <th scope="col">Apresentação</th>
-                        <th scope="col">Detalhes</th>
+                        <th scope="col" colSpan="2" >Detalhes</th>   
                       </tr>
                     </thead>
                     <tbody>
@@ -58,7 +87,8 @@ function Boards() {
                         <td>Robson</td>
                         <td className="st-status"><span className="st-progress">Em avaliação</span></td>
                         <td>18/06/2022</td>
-                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i>Visualizar</a></td>
+                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i></a></td>
+                        <td><a href="/details" className="tblack"><i className="fa-solid fa-trash"></i></a></td>
                       </tr>
                       <tr>
                         <th scope="row">2</th>
@@ -67,7 +97,8 @@ function Boards() {
                         <td>Giovane</td>
                         <td className="st-status"><span className="st-success">Avaliado</span></td>
                         <td>20/06/2022</td>
-                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i>Visualizar</a></td>
+                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i></a></td>
+                        <td><a href="/details" className="tblack"><i className="fa-solid fa-trash"></i></a></td>
                       </tr>
                       <tr>
                         <th scope="row">3</th>
@@ -76,7 +107,8 @@ function Boards() {
                         <td>Rodrigo</td>
                         <td className="st-status"><span className="st-waiting">Em espera</span></td>
                         <td>25/06/2022</td>
-                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i>Visualizar</a></td>
+                        <td><a href="/details" className="tblack"><i className="fa-solid fa-magnifying-glass"></i></a></td>
+                        <td><a href="/details" className="tblack" id="brabo"><i className="fa-solid fa-trash"></i></a></td>
                       </tr>
                     </tbody>
                   </table>
