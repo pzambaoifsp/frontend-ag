@@ -8,6 +8,7 @@ import "../style/fontawesome/css/all.css";
 import UnprotectedRoute from "../components/UnprotectedRoute";
 import Confirm from "../pages/Confirm";
 import SignUpForm from "../pages/SignUpForm";
+import Edit from '../pages/Edit';
 
 export function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export function AppRoutes() {
         <Route path="/details" element={<ProtectedRoute component={Details} redirect="/login"/>}/>
         <Route path="/confirm" element={<UnprotectedRoute component={Confirm} redirect="/login"/>}/>
         <Route path="/signUp" element={<UnprotectedRoute component={SignUpForm} redirect="/boards"/>}/>
+        <Route path="/edit/:id" element={<ProtectedRoute component={Edit} redirect="/login"/>}/>
       </Routes>
     </BrowserRouter>
   )

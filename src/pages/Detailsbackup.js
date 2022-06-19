@@ -1,6 +1,6 @@
 import React, { Component, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import apifrom "../services/api";
+import api from "../services/api";
 import "../style/details.css";
 
 

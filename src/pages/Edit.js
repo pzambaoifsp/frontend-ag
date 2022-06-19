@@ -1,10 +1,40 @@
-import React, { Component, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import React, { Component, useState, useEffect } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 import "../style/details.css";
 
-function Details() {
+function Edit() {
+  const router = useParams();
   const navigate = useNavigate();
+
+  const [id, setId] = useState();
+
+  useEffect(() => {
+    const { id } = router;
+    setId(id);
+
+    const token = "Bearer " + localStorage.getItem("access_token");
+
+    api
+      .get(`agendamentos/${id}`, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        setTitulo(response.data.data.titulo);
+        setDescricao(response.data.data.descricao);
+        setTipoBanca(response.data.data.tipoBanca);
+        setTema(response.data.data.tema);
+        setDataAgendamento(
+          response.data.data.dataAgendamento.replace("T", " ")
+        );
+        setListaIdParticipantes(response.data.data.listaIdParticipantes);
+        setListaIdAvaliadores(response.data.data.listaIdAvaliadores);
+        setStatusAgendamento(response.data.data.statusAgendamento);
+      });
+  }, []);
 
   const handleDeslog = async (event) => {
     localStorage.removeItem("access_token");
@@ -29,16 +59,19 @@ function Details() {
       const token = "Bearer " + localStorage.getItem("access_token");
       console.log(token);
 
-      const response = await api.post(
-        "/agendamentos",
+      console.log(id);
+
+      const response = await api.put(
+        "/agendamentos/",
         {
+          id: parseInt(id),
           titulo,
           descricao,
           tipoBanca,
           tema,
-          dataAgendamento: "2023-04-30 18:30",
-          listaIdParticipantes: [parseInt(listaIdParticipantes)],
-          listaIdAvaliadores: [parseInt(listaIdAvaliadores)],
+          dataAgendamento,
+          listaIdParticipantes: [1],
+          listaIdAvaliadores: [2],
           statusAgendamento,
         },
         {
@@ -50,7 +83,7 @@ function Details() {
 
       navigate("/boards");
     } catch (error) {
-      console.log(`Erro ao realizar login: ${error.message}`);
+      console.log(`Erro ao editar: ${error.message}`);
     }
   };
 
@@ -242,4 +275,4 @@ function Details() {
   );
 }
 
-export default Details;
+export default Edit;

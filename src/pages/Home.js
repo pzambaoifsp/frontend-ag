@@ -1,24 +1,23 @@
 import { useNavigate } from "react-router-dom";
 
 import React, { useState } from "react";
-import "../style/signinform.css";
-
-
+import "../style/signform.css";
 
 export function Home() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleGoToLogin = () => {
-    navigate('/confirm');
-  }
+    navigate("/confirm");
+  };
 
   return (
-  <div>
-    <div className="appForm">
-      <button type="button" onClick={handleGoToLogin}>Realizar login</button>
-     
+    <div>
+      <div className="appForm">
+        <button type="button" onClick={handleGoToLogin}>
+          Realizar login
+        </button>
+      </div>
     </div>
-  </div>
   );
 }
 

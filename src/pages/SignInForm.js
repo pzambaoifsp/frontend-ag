@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../style/signinform.css";
+import "../style/signform.css";
 import api from "../services/api";
 
-function SignInForm(){
+function SignInForm() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginErr, setLoginErr] = useState(false)
 
   const handleGoToCreate = async (event) => {
-    navigate("/signUp")
-  }
+    navigate("/signUp");
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -25,7 +26,7 @@ function SignInForm(){
       const response = await api.post("/auth/login", params);
 
       const data = response.data;
-      
+
       // Extrair os token
       const accessToken = data.data["access_token"];
       const refreshToken = data.data["refresh_token"];
@@ -35,12 +36,11 @@ function SignInForm(){
       localStorage.setItem("refresh_token", refreshToken);
 
       // Redirecionar
-      navigate("/boards")
-      
-    } catch(error) {
-      console.log(`Erro ao realizar login: ${error.message}`);
+      navigate("/boards");
+    } catch (error) {
+      setLoginErr(true)
     }
-  }
+  };
   return (
     <div className="appForm">
       <h1 className="center">Login</h1>
@@ -48,13 +48,13 @@ function SignInForm(){
         <form className="formFields" onSubmit={handleSubmit}>
           <div className="formField">
             <label className="formFieldLabel" htmlFor="email">
-              Login
+              E-mail
             </label>
             <input
               type="text"
               id="email"
               className="formFieldInput"
-              placeholder="Digite o seu login"
+              placeholder="Digite o seu e-mail"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -75,9 +75,13 @@ function SignInForm(){
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          
+          {loginErr ? <p className="mb-4">E-mail ou senha inválidos.</p> : ''}
 
           <div className="formField">
-            <button type="submit" className="btn btn-block btn-primary">Acessar</button>
+            <button type="submit" className="btn btn-block btn-primary">
+              Acessar
+            </button>
           </div>
         </form>
         <div className="formField center">
@@ -85,9 +89,15 @@ function SignInForm(){
         </div>
 
         <div className="formField">
-          <button type="submit" className="btn btn-block btn-primary" id="createAccount" onClick={handleGoToCreate}>Registrar-se</button>
+          <button
+            type="submit"
+            className="btn btn-block btn-primary"
+            id="createAccount"
+            onClick={handleGoToCreate}
+          >
+            Registrar-se
+          </button>
         </div>
-        
       </div>
     </div>
   );

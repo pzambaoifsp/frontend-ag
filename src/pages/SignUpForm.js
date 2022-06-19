@@ -1,140 +1,164 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import "../style/signupform.css";
+import "../style/signform.css";
+import {validEmail, validEmailAluno, validPassword, validPront, validName} from '../utils/regex'
 
-function SignUpForm(){
-    const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [prontuario, setProntuario] = useState("");
-    const [username, setUsername] = useState("");
-    const [permission, setPermission] = useState("");
-    const [shouldSendConfirmationCode, setShouldSendConfirmationCode] = useState("");
-  
-    const handleCreateUser = async (event) => {
-      event.preventDefault();
-  
-      try {
-          
-        const response = await api.post("/auth/register", {
-            email,
-            password,
-            prontuario,
-            username,
-            permission,
-            shouldSendConfirmationCode: true
-        },{
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+function SignUpForm() {
+  const navigate = useNavigate();
 
-        // Redirecionar
-        navigate("/confirm")
-        
-      } catch(error) {
-        console.log(`Erro ao realizar cadastro: ${error.message}`);
-      }
+  const [emailErr, setEmailErr] = useState(false);
+  const [emailProf, setEmailProf] = useState(false);
+  const [passwordErr, setPasswordErr] = useState(false);
+  const [validProntErr, setValidProntErr] = useState(false);
+  const [validNameErr, setValidNameErr] = useState(false);
+
+  const validate = (event) => {
+    event?.preventDefault();
+    
+    const emailIsValid = validEmail.test(email)
+    setEmailErr(!emailIsValid)
+    
+    const passwordIsValid = validPassword.test(password)
+    setPasswordErr(!passwordIsValid)
+    
+    const prontIsValid = validPront.test(prontuario)
+    setValidProntErr(!prontIsValid)
+
+    const nameIsValid = validName.test(username)
+    setValidNameErr(!nameIsValid)
+    
+    if ((emailIsValid) && (passwordIsValid) && (prontIsValid) && (nameIsValid)){
+      handleCreateUser()
+    }  
+  }
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [prontuario, setProntuario] = useState("");
+  const [username, setUsername] = useState("");
+
+  const [permission, setPermission] = useState("");
+
+  const handleCreateUser = async () => {
+
+    try {
+      const response = await api.post(
+        "/auth/register",
+        {
+          email,
+          password,
+          prontuario,
+          username,
+          permission,
+          shouldSendConfirmationCode: true,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      localStorage.setItem("email_confirmation", email);
+
+      // Redirecionar
+      navigate("/confirm");
+    } catch (error) {
+      console.log(`Erro ao realizar cadastro: ${error.message}`);
     }
-    return (
-    <div className="page-wrapper">
-    <div className="wrapper wrapper--w900">
-        <div className="card card-6">
-            <div className="card-body"> 
-                <form method="POST" onSubmit={handleCreateUser} >
-                    <div className="form-row">
-                        <div className="name">Email</div>
-                        <div className="value">
-                            <input 
-                                type="text" 
-                                id="email"
-                                className="input--style-6" 
-                                name="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            /> 
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="name">Senha</div>
-                        <div className="value">
-                            <input 
-                                type="text" 
-                                id="password"
-                                className="input--style-6" 
-                                name="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="name">Prontuário</div>
-                        <div className="value">
-                            <input 
-                                type="text" 
-                                id="prontuario"
-                                className="input--style-6" 
-                                name="prontuario"
-                                value={prontuario}
-                                onChange={(e) => setProntuario(e.target.value)}
-                            />
-                        </div>
-                    </div> 
-                    <div className="form-row">
-                        <div className="name">Nome do usuário</div>
-                        <div className="value">
-                            <input 
-                                type="text" 
-                                id="username"
-                                className="input--style-6"
-                                name="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-row">
-                        <div className="name">permission</div>
-                        <div className="value">
-                            <input 
-                                type="text" 
-                                id="permission"
-                                className="input--style-6" 
-                                name="permission"
-                                value={permission}
-                                onChange={(e) => setPermission(e.target.value)}
-                            />
-                        </div>
-                    </div> 
-
-                    <div className="form-row">
-                        <div className="name">shouldSendConfirmationCode</div>
-                        <div className="value">
-                            <input 
-                                type="checkbox" 
-                                id="shouldSendConfirmationCode"
-                                className="input--style-6" 
-                                name="shouldSendConfirmationCode"
-                                value={shouldSendConfirmationCode}
-                                onChange={(e) => setShouldSendConfirmationCode(e.target.value)}
-                            />
-                        </div>
-                    </div> 
-
-                    {/* <input type="text" id="permission" name="permission" value="ADMIN" onChange={(e) => setPermission(e.target.value)} hidden/> */}
-                    {/* <input type="checkbox" id="shouldSendConfirmationCode" checked name="shouldSendConfirmationCode" value={shouldSendConfirmationCode} onChange={(e) => setShouldSendConfirmationCode(e.target.value)} hidden/> */}
-
-                    <div className="formField">
-                        <button type="submit" className="btn btn-block btn-primary">Acessar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+  };
+  return (
+    <div className="appForm">
+      <h1 className="center mb-4">Realizar Cadastro</h1>
+      <div className="formCenter mt-5">
+        <form className="formFields">
+          <div className="formField">
+            <label className="formFieldLabel" htmlFor="email">
+              Email acadêmico
+            </label>
+            <input
+              type="text"
+              id="email"
+              className="formFieldInput"
+              placeholder="Digite seu email acadêmico"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {emailErr && <p>Digite um e-mail válido. Lembre-se, o e-mail deve pertencer ao domínio "ifsp.edu.br"</p>}
+          </div>
+          <div className="formField">
+            <label className="formFieldLabel" htmlFor="password">
+              Senha
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="formFieldInput"
+              placeholder="Digite uma senha"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {passwordErr && <p>Senha inválida. A senha precisa conter 8 caractéres: maiusculos, minusculos e numérico.</p>}
+          </div>
+          <div className="formField">
+            <label className="formFieldLabel" htmlFor="password">
+              Prontuário
+            </label>
+            <input
+              type="text"
+              id="prontuario"
+              className="formFieldInput"
+              placeholder="Digite o seu prontuário"
+              name="prontuario"
+              value={prontuario}
+              onChange={(e) => setProntuario(e.target.value)}
+            />
+           {validProntErr && <p>Digite um prontuário válido.</p>}
+          </div>
+          <div className="formField">
+            <label className="formFieldLabel" htmlFor="password">
+              Nome do usuário
+            </label>
+            <input
+              type="text"
+              id="username"
+              className="formFieldInput"
+              placeholder="Digite o nome do usuário"
+              name="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            {validNameErr && <p>O nome precisa conter no mínimo 3 caractéres.</p>}
+          </div>
+          <div className="formField">
+            <label className="formFieldLabel" htmlFor="password">
+              Permissão
+            </label>
+            <input
+              type="text"
+              id="permission"
+              className="formFieldInput"
+              placeholder="Este campo irá sair daqui"
+              name="permission"
+              value={permission}
+              onChange={(e) => setPermission(e.target.value)}
+            />
+          </div>
+          <div className="formField">
+          <button
+            type="submit"
+            className="btn btn-block btn-primary"
+            onClick={validate}
+          >
+            Criar conta
+          </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
