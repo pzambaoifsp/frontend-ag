@@ -2,8 +2,34 @@ import React, { Component, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "../style/details.css";
+import Select from 'react-select';
 
 function Details() {
+
+  const options = [
+    { value: 'chocolate', label: 'Chocolate' },
+    { value: 'strawberry', label: 'Strawberry' },
+    { value: 'vanilla', label: 'Vanilla' }
+  ]
+
+  const optionsAg = [
+    { value: 'AGENDADO', label: 'Agendado' },
+    { value: 'AGUARDANDO', label: 'Aguardando' },
+    { value: 'CANCELADO', label: 'Cancelado' }
+  ]
+
+  const optionsBanca = [
+    { value: 'TCC_CURSO_TECNICO', label: 'TCC Curso Técnico' },
+    { value: 'TCC_CURSO_SUPERIOR', label: 'TCC Curso Superior' },
+    { value: 'MONOGRAFIA_SUPERIOR', label: 'Monografia Superior' }
+  ]
+
+  const optionsAdm = [
+    { value: 'TCC_CURSO_TECNICO', label: 'TCC Curso Técnico' },
+    { value: 'TCC_CURSO_SUPERIOR', label: 'TCC Curso Superior' },
+    { value: 'MONOGRAFIA_SUPERIOR', label: 'Monografia Superior' }
+  ]
+
   const navigate = useNavigate();
 
   const handleDeslog = async (event) => {
@@ -21,6 +47,7 @@ function Details() {
   const [listaIdParticipantes, setListaIdParticipantes] = useState("");
   const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
   const [statusAgendamento, setStatusAgendamento] = useState("");
+  const [adminsBanca, setAdminsBanca] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -40,6 +67,7 @@ function Details() {
           listaIdParticipantes: [parseInt(listaIdParticipantes)],
           listaIdAvaliadores: [parseInt(listaIdAvaliadores)],
           statusAgendamento,
+          adminsBanca: [parseInt(listaIdAvaliadores)]
         },
         {
           headers: {
@@ -131,21 +159,12 @@ function Details() {
                 <div className="form-row">
                   <div className="name">Tipo de Banca</div>
                   <div className="value">
-                    <select
-                      className="input--style-6 form-control"
-                      value={tipoBanca}
-                      onChange={(e) => setTipoBanca(e.target.value)}
-                    >
-                      <option value="TCC_CURSO_TECNICO">
-                        TCC Curso Técnico
-                      </option>
-                      <option value="TCC_CURSO_SUPERIOR">
-                        TCC Curso Superior
-                      </option>
-                      <option value="MONOGRAFIA_SUPERIOR">
-                        Monografia Curso
-                      </option>
-                    </select>
+                    <Select
+                      options={optionsBanca}
+                      //defaultValue={}
+                      // value={tipoBanca}
+                      // onChange={(e) => setTipoBanca(e.target.value)}
+                    />
                   </div>
                 </div>
                 <div className="form-row">
@@ -176,41 +195,47 @@ function Details() {
                 <div className="form-row">
                   <div className="name">Participantes</div>
                   <div className="value">
-                    <select
-                      className="input-group form-control"
-                      value={listaIdParticipantes}
-                      onChange={(e) => setListaIdParticipantes(e.target.value)}
-                    >
-                      <option value="1">Participantes</option>
-                      <option value="2">teste2</option>
-                    </select>
+                    <Select
+                      options={options}
+                      //defaultValue={}
+                      // value={listaIdParticipantes}
+                      // onChange={(e) => setListaIdParticipantes(e.target.value)}
+                      isMulti
+                    />
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="name">Avaliadores</div>
-                  <div className="value">
-                    <select
-                      className="input-group form-control"
-                      value={listaIdAvaliadores}
-                      onChange={(e) => setListaIdAvaliadores(e.target.value)}
-                    >
-                      <option value="1">Avaliadores</option>
-                      <option value="2">Testes</option>
-                    </select>
+                  <div className="value">    
+                    <Select
+                      options={options}
+                      //defaultValue={}
+                      // value={listaIdAvaliadores}
+                      // onChange={(e) => setListaIdAvaliadores(e.target.value)}
+                      isMulti
+                    />
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="name">Status Agendamento</div>
                   <div className="value">
-                    <select
-                      className="input-group form-control"
-                      value={statusAgendamento}
-                      onChange={(e) => setStatusAgendamento(e.target.value)}
-                    >
-                      <option value="AGENDADO">Agendado</option>
-                      <option value="AGUARDANDO">Aguardando</option>
-                      <option value="CANCELADO">Cancelado</option>
-                    </select>
+                    <Select
+                      options={optionsAg}
+                      //defaultValue={}
+                      // value={statusAgendamento}
+                      // onChange={(e) => setStatusAgendamento(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="name">Administradores da Banca</div>
+                  <div className="value">
+                    <Select
+                      options={optionsAdm}                      
+                      // value={adminsBanca}
+                      // onChange={(e) => setAdminsBanca(e.target.value)}
+                      isMulti
+                    />
                   </div>
                 </div>
                 {/*<div className="form-row">

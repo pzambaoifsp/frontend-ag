@@ -114,6 +114,7 @@ function Boards() {
               <th scope="col">Participantes</th>
               <th scope="col">Avaliadores</th>
               <th scope="col">Status</th>
+              <th scope="col">Administradores</th>
               <th scope="col" colSpan="2">
                 Detalhes
               </th>
@@ -131,6 +132,7 @@ function Boards() {
                 <td>{item.participantes}</td>
                 <td>{item.avaliadores}</td>
                 <td className="st-status">{item.agendamento}</td>
+                <td>{item.adminsBanca}</td>
                 <td>
                   <a href={`/edit/${item.id}`} className="tblack">
                     <i className="fa-solid fa-magnifying-glass"></i>

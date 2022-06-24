@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "../style/boards.css";
@@ -10,9 +10,12 @@ function Confirm() {
   const [activationCode, setActivationCode] = useState("");
 
   var confirm_email = localStorage.getItem("email_confirmation")
-  if (!confirm_email){
-    navigate("/login");
-  }
+
+  useEffect(() => {
+    if (!confirm_email){
+     navigate("/login")   
+    }
+  },[])
 
   const handleConfirmAccount = async (event) => {
     event.preventDefault();

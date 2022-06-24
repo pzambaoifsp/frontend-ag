@@ -51,6 +51,7 @@ function Edit() {
   const [listaIdParticipantes, setListaIdParticipantes] = useState("");
   const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
   const [statusAgendamento, setStatusAgendamento] = useState("");
+  const [adminsBanca, setAdminsBanca] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -73,6 +74,7 @@ function Edit() {
           listaIdParticipantes: [1],
           listaIdAvaliadores: [2],
           statusAgendamento,
+          adminsBanca: [2]
         },
         {
           headers: {
@@ -243,6 +245,19 @@ function Edit() {
                       <option value="AGENDADO">Agendado</option>
                       <option value="AGUARDANDO">Aguardando</option>
                       <option value="CANCELADO">Cancelado</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="name">Administradores da Banca</div>
+                  <div className="value">
+                    <select
+                      className="input-group form-control"
+                      value={adminsBanca}
+                      onChange={(e) => setAdminsBanca(e.target.value)}
+                    >
+                      <option value="1">Avaliadores</option>
+                      <option value="2">Testes</option>
                     </select>
                   </div>
                 </div>
