@@ -1,12 +1,12 @@
 import jwtDecode from "jwt-decode";
 import React, { Component, useState, useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import AgendamentoDataSource from "../dataSource/AgendamentoDataSource";
-import api from "../services/api";
-import "../style/details.css";
-import getTokenOrEmptyToken from "../utils/TokenUtils";
+import AgendamentoDataSource from "../../dataSource/AgendamentoDataSource";
+import api from "../../services/api";
+import "../../style/details.css";
+import getTokenOrEmptyToken from "../../utils/TokenUtils";
 
-function Edit() {
+function BancaDetailsById() {
   const router = useParams();
   const navigate = useNavigate();
 
@@ -315,4 +315,4 @@ function Edit() {
   );
 }
 
-export default Edit;
+export default BancaDetailsById;

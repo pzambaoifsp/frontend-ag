@@ -35,4 +35,16 @@ async function addAgendamento(
       return response;
 }
 
-export default {addAgendamento} 
+async function getAgendamentoById(accessToken, id) {
+    const response = await api
+    .get(`agendamentos/${id}`, {
+      headers: {
+        Authorization: accessToken,
+        "Content-Type": "application/json",
+      },
+    })
+
+    return response;
+}
+
+export default {addAgendamento, getAgendamentoById} 

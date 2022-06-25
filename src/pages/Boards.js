@@ -1,7 +1,11 @@
+import jwtDecode from "jwt-decode";
 import React, { Component, useState } from "react";
 import { Navigate } from "react-router-dom";
+import EditButton from "../components/editBancaButton";
+import ViewDetailsBancaButton from "../components/viewDetailsBancaButton";
 import api from "../services/api";
 import "../style/boards.css";
+import getTokenOrEmptyToken from "../utils/TokenUtils";
 
 function Boards() {
   localStorage.removeItem("email_confirmation");
@@ -54,6 +58,33 @@ function Boards() {
         window.location.reload();
       });
   };
+
+  const token = getTokenOrEmptyToken();
+  const [bancasEnabledNoEdit, setEnabledToEdit] = useState([]);
+
+  React.useEffect(() => {
+    const tokenDecoded = jwtDecode(token)
+    var bancasWithPermissionToEdit = [];
+
+    const hasAdminPermission = tokenDecoded.permissions.indexOf('ADMIN') != -1
+    if (hasAdminPermission) {
+      bancasWithPermissionToEdit = agendamentos
+    } else {
+      bancasWithPermissionToEdit = agendamentos.filter(banca => banca.listaAdmins.map(user => user.id).indexOf(5) != -1)
+    }
+
+    console.log(bancasWithPermissionToEdit)
+    
+
+    setEnabledToEdit(bancasWithPermissionToEdit.map(banca => banca.id))
+
+
+  }, [agendamentos])
+
+  function hasPermissionToEditThisBanca(idBanca) {
+    console.log(bancasEnabledNoEdit.indexOf(idBanca) != -1)
+    return bancasEnabledNoEdit.indexOf(idBanca) != -1;
+  }
 
   return (
     <div>
@@ -115,7 +146,7 @@ function Boards() {
               <th scope="col">Avaliadores</th>
               <th scope="col">Status</th>
               <th scope="col">Administradores</th>
-              <th scope="col" colSpan="2">
+              <th scope="col" colSpan="3">
                 Detalhes
               </th>
             </tr>
@@ -134,9 +165,10 @@ function Boards() {
                 <td className="st-status">{item.agendamento}</td>
                 <td>{item.adminsBanca}</td>
                 <td>
-                  <a href={`/edit/${item.id}`} className="tblack">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                  </a>
+                  <EditButton id={item.id} isEnabledToEdit={hasPermissionToEditThisBanca(item.id)}></EditButton>
+                </td>
+                <td>
+                  <ViewDetailsBancaButton id={item.id}  />
                 </td>
                 <td>
                   <i
