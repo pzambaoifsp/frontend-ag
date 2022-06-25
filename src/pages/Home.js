@@ -17,11 +17,8 @@ export function Home() {
 
   const handleListAgendamentos = async (event) => {
     try {
-      const token = "Bearer " + localStorage.getItem("access_token");
-
-      const response = await api.get("/agendamentos", {
+      const response = await api.get("/public/agendamentos", {
         headers: {
-          Authorization: token,
           "Content-Type": "application/json",
         },
       });
