@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "../style/signform.css";
-import {validEmail, validEmailAluno, validPassword, validPront, validName} from '../utils/regex'
+import {validEmail, validEmailProf, validPassword, validPront, validName} from '../utils/regex'
 
 
 function SignUpForm() {
@@ -16,7 +16,10 @@ function SignUpForm() {
 
   const validate = (event) => {
     event?.preventDefault();
-    
+
+    const emailIsProf = validEmailProf.test(email)
+    setEmailProf(emailIsProf)
+
     const emailIsValid = validEmail.test(email)
     setEmailErr(!emailIsValid)
     
@@ -39,10 +42,7 @@ function SignUpForm() {
   const [prontuario, setProntuario] = useState("");
   const [username, setUsername] = useState("");
 
-  const [permission, setPermission] = useState("");
-
   const handleCreateUser = async () => {
-
     try {
       const response = await api.post(
         "/auth/register",
@@ -51,7 +51,7 @@ function SignUpForm() {
           password,
           prontuario,
           username,
-          permission,
+          permission: emailProf ? 'PROFESSOR' : 'ALUNO',
           shouldSendConfirmationCode: true,
         },
         {
@@ -135,27 +135,13 @@ function SignUpForm() {
             {validNameErr && <p>O nome precisa conter no mínimo 3 caractéres.</p>}
           </div>
           <div className="formField">
-            <label className="formFieldLabel" htmlFor="password">
-              Permissão
-            </label>
-            <input
-              type="text"
-              id="permission"
-              className="formFieldInput"
-              placeholder="Este campo irá sair daqui"
-              name="permission"
-              value={permission}
-              onChange={(e) => setPermission(e.target.value)}
-            />
-          </div>
-          <div className="formField">
-          <button
-            type="submit"
-            className="btn btn-block btn-primary"
-            onClick={validate}
-          >
-            Criar conta
-          </button>
+            <button
+              type="submit"
+              className="btn btn-block btn-primary"
+              onClick={validate}
+            >
+              Criar conta
+            </button>
           </div>
         </form>
       </div>

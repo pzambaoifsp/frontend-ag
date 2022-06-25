@@ -1,5 +1,5 @@
-export const validEmailAluno = new RegExp(
-  "@aluno([.])ifsp([.])edu([.])br"
+export const validEmailProf = new RegExp(
+  "@ifsp([.])edu([.])br"
 )
 
 export const validEmail = new RegExp(
