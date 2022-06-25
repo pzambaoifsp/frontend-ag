@@ -1,34 +1,24 @@
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "../style/details.css";
 import Select from 'react-select';
+import getTokenOrEmptyToken from "../utils/TokenUtils";
+import FilterMembers from "../utils/FilterMembers";
+import AgendamentoDataSource from "../dataSource/AgendamentoDataSource";
+import UsersDataSource from "../dataSource/UsersDataSource";
+import Values from "../utils/Values";
+import {TextField} from "@mui/material";
+
+// date-fns
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider, MobileDateTimePicker, StaticDateTimePicker } from "@mui/x-date-pickers";
 
 function Details() {
 
-  const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' }
-  ]
+  const status = Values.status
 
-  const optionsAg = [
-    { value: 'AGENDADO', label: 'Agendado' },
-    { value: 'AGUARDANDO', label: 'Aguardando' },
-    { value: 'CANCELADO', label: 'Cancelado' }
-  ]
-
-  const optionsBanca = [
-    { value: 'TCC_CURSO_TECNICO', label: 'TCC Curso Técnico' },
-    { value: 'TCC_CURSO_SUPERIOR', label: 'TCC Curso Superior' },
-    { value: 'MONOGRAFIA_SUPERIOR', label: 'Monografia Superior' }
-  ]
-
-  const optionsAdm = [
-    { value: 'TCC_CURSO_TECNICO', label: 'TCC Curso Técnico' },
-    { value: 'TCC_CURSO_SUPERIOR', label: 'TCC Curso Superior' },
-    { value: 'MONOGRAFIA_SUPERIOR', label: 'Monografia Superior' }
-  ]
+  const optionsBanca = Values.optionsBanca
 
   const navigate = useNavigate();
 
@@ -39,6 +29,10 @@ function Details() {
     Navigate("/login");
   };
 
+
+  const [membersAlunos, setMembersAlunos] = useState([]);
+  const [membersProfessores, setMembersProfessores] = useState([]);
+  const [membersAdms, setMembersAdms] = useState([]);
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tipoBanca, setTipoBanca] = useState("");
@@ -48,35 +42,53 @@ function Details() {
   const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
   const [statusAgendamento, setStatusAgendamento] = useState("");
   const [adminsBanca, setAdminsBanca] = useState("");
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const token = getTokenOrEmptyToken()
+    UsersDataSource.getUsers(token).then(res =>
+      setUsers(res.data.data)
+    );
+
+  }, [])
+
+  useEffect(() => {
+    FilterMembers.membersAlunos(users).forEach(user => {
+      console.log(user)
+      const value = { value: user.id, label: user.username }
+      setMembersAlunos(oldArray => [...oldArray, value]);
+    })
+
+    FilterMembers.membersProfessores(users).forEach(user => {
+      const value = { value: user.id, label: user.username }
+      setMembersProfessores(oldArray => [...oldArray, value]);
+      setMembersAdms(oldArray => [...oldArray, value]);
+    })
+  }, [users])
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const token = "Bearer " + localStorage.getItem("access_token");
+      const token = getTokenOrEmptyToken()
       console.log(token);
+      console.log(listaIdParticipantes)
 
-      const response = await api.post(
-        "/agendamentos",
-        {
-          titulo,
-          descricao,
-          tipoBanca,
-          tema,
-          dataAgendamento: "2023-04-30 18:30",
-          listaIdParticipantes: [parseInt(listaIdParticipantes)],
-          listaIdAvaliadores: [parseInt(listaIdAvaliadores)],
-          statusAgendamento,
-          adminsBanca: [parseInt(listaIdAvaliadores)]
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+      const response = AgendamentoDataSource.addAgendamento(
+        titulo,
+        descricao,
+        tipoBanca,
+        tema,
+        dataAgendamento,
+        [parseInt(listaIdParticipantes)],
+        [parseInt(listaIdAvaliadores)],
+        statusAgendamento,
+        [parseInt(listaIdAvaliadores)]
       );
 
+
       navigate("/boards");
+
     } catch (error) {
       console.log(`Erro ao realizar login: ${error.message}`);
     }
@@ -163,7 +175,7 @@ function Details() {
                       options={optionsBanca}
                       //defaultValue={}
                       // value={tipoBanca}
-                      // onChange={(e) => setTipoBanca(e.target.value)}
+                      onChange={(data) => setTipoBanca(data.value)}
                     />
                   </div>
                 </div>
@@ -182,36 +194,40 @@ function Details() {
                 <div className="form-row">
                   <div className="name">Data de Agendamento</div>
                   <div className="value form-outline">
-                    <input
-                      placeholder=""
-                      type="text"
-                      id=""
-                      className="input--style-6 form-control"
-                      value={dataAgendamento}
-                      onChange={(e) => setDataAgendamento(e.target.value)}
-                    />
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DateTimePicker
+                        renderInput={(props) => <TextField className="input--style-6 form-control "{...props} />}
+                        label="Data de agendamento"
+                        value={dataAgendamento}
+                        onChange={(newValue) => {
+                          setDataAgendamento(newValue.toISOString().replace('T', ' ').substring(0, 16));
+                        }}
+                      />
+                    </LocalizationProvider>
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="name">Participantes</div>
                   <div className="value">
                     <Select
-                      options={options}
+                      options={membersAlunos}
                       //defaultValue={}
                       // value={listaIdParticipantes}
-                      // onChange={(e) => setListaIdParticipantes(e.target.value)}
+                      onChange={(data) => setListaIdParticipantes(
+                        data.map(user => user.value
+                        ))}
                       isMulti
                     />
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="name">Avaliadores</div>
-                  <div className="value">    
+                  <div className="value">
                     <Select
-                      options={options}
+                      options={membersProfessores}
                       //defaultValue={}
                       // value={listaIdAvaliadores}
-                      // onChange={(e) => setListaIdAvaliadores(e.target.value)}
+                      onChange={(data) => setListaIdAvaliadores(data.map(user => user.value))}
                       isMulti
                     />
                   </div>
@@ -220,10 +236,10 @@ function Details() {
                   <div className="name">Status Agendamento</div>
                   <div className="value">
                     <Select
-                      options={optionsAg}
+                      options={status}
                       //defaultValue={}
-                      // value={statusAgendamento}
-                      // onChange={(e) => setStatusAgendamento(e.target.value)}
+                      //value={statusAgendamento}
+                      onChange={(data) => setStatusAgendamento(data.value)}
                     />
                   </div>
                 </div>
@@ -231,24 +247,13 @@ function Details() {
                   <div className="name">Administradores da Banca</div>
                   <div className="value">
                     <Select
-                      options={optionsAdm}                      
+                      options={membersAdms}
                       // value={adminsBanca}
-                      // onChange={(e) => setAdminsBanca(e.target.value)}
+                      onChange={(data) => setAdminsBanca(data.map(user => user.value))}
                       isMulti
                     />
                   </div>
                 </div>
-                {/*<div className="form-row">
-                                    <div className="name">Upload CV</div>
-                                    <div className="value">
-                                        <div className="input-group js-input-file">
-                                            <input className="input-file" type="file" name="file_cv" id="file"/>
-                                            <label className="label--file" for="file">Choose file</label>
-                                            <span className="input-file__info">No file chosen</span>
-                                        </div>
-                                        <div className="label--desc">Upload your CV/Resume or any other relevant file. Max file size 50 MB</div>
-                                    </div>
-                                </div>*/}
                 <div className="card-footer">
                   <button
                     type="submit"
@@ -256,7 +261,6 @@ function Details() {
                   >
                     Salvar
                   </button>
-                  {/* onClick={event =>  window.location.href='./boards'} */}
                 </div>
               </form>
             </div>
