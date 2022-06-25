@@ -5,3 +5,4 @@
   const membersAdminDaBanca = (users) => Object.values(users).filter(user => user.permission == "TODO");
 
   export default {membersUsuarios, membersAlunos, membersProfessores, membersAdministradores, membersAdminDaBanca}
+  
