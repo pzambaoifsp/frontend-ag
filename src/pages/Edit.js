@@ -2,6 +2,7 @@ import React, { Component, useState, useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 import "../style/details.css";
+import getTokenOrEmptyToken from "../utils/TokenUtils";
 
 function Edit() {
   const router = useParams();
@@ -13,7 +14,7 @@ function Edit() {
     const { id } = router;
     setId(id);
 
-    const token = "Bearer " + localStorage.getItem("access_token");
+    const token = getTokenOrEmptyToken();
 
     api
       .get(`agendamentos/${id}`, {
