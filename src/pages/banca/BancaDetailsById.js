@@ -1,12 +1,18 @@
 import jwtDecode from "jwt-decode";
 import React, { Component, useState, useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
+import Header from "../../components/Header/Header";
 import AgendamentoDataSource from "../../dataSource/AgendamentoDataSource";
 import api from "../../services/api";
 import "../../style/details.css";
 import TokenUtils from "../../utils/TokenUtils";
+import { Container, MenuItem, TextField } from "@mui/material";
+import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider, MobileDateTimePicker, StaticDateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import Select from 'react-select';
+import Values from "../../utils/Values";
 
-function BancaDetailsById() {
+function Edit() {
   const router = useParams();
   const navigate = useNavigate();
 
@@ -19,6 +25,13 @@ function BancaDetailsById() {
     Navigate("/login");
   };
 
+  const optionsStatus = Values.status
+  const optionsBanca = Values.optionsBanca
+
+  const [optionsAlunos, setOptionsAlunos] = useState([]);
+  const [optionsProfessores, setOptionsProfessores] = useState([]);
+  const [optionsAdms, setOptionsAdms] = useState([]);
+  const [listaIdAdms, setListaIdAdms] = useState([])
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tipoBanca, setTipoBanca] = useState("");
@@ -53,6 +66,21 @@ function BancaDetailsById() {
   }, []);
 
   useEffect(() => {
+    const canEdit = false;
+
+    const token = TokenUtils.getTokenOrEmptyToken();
+    const tokenDecoded = jwtDecode(token)
+    console.log(tokenDecoded)
+
+    console.log(adminsBanca)
+    //const isCurrentUserAdmin = adminsBanca.find(tokenDecoded.id)
+    /*
+    if (isCurrentUserAdmin || tokenDecoded.permission.find("ADMIN"))
+      canEdit = true
+    else
+      
+    canEdit = false
+    */
 
       setEnableToEdit(true)
   }, [adminsBanca])
@@ -101,46 +129,7 @@ function BancaDetailsById() {
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container">
-          <a className="navbar-brand" href="/">
-            Calendário
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarsExample07"
-            aria-controls="navbarsExample07"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-
-          <div className="collapse navbar-collapse" id="navbarsExample07">
-            <ul className="navbar-nav mr-auto">
-              <li className="nav-item active">
-                <a className="nav-link" href="#">
-                  <span className="sr-only">(current)</span>
-                </a>
-              </li>
-            </ul>
-            <div className="form-inline my-2 my-md-0">
-              <a className="nav-link twhite" href="/login">
-                Login
-              </a>
-              <a
-                className="nav-link twhite"
-                onClick={handleDeslog}
-                href="/login"
-              >
-                Deslogar
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header name={"Calendário"}></Header>
 
       <div className="page-wrapper">
         <div className="wrapper wrapper--w900">
@@ -150,146 +139,121 @@ function BancaDetailsById() {
                 <div className="form-row">
                   <div className="name">Título</div>
                   <div className="value">
-                    <input
-                      className="input--style-6"
+                    <TextField required label="Título da banca"
+                      fullWidth
                       type="text"
-                      name="full_name"
                       value={titulo}
                       onChange={(e) => setTitulo(e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="form-row">
-                  <div className="name">Descrição</div>
-                  <div className="value">
-                    <div className="input-group">
-                      <textarea
-                        className="textarea--style-6"
-                        name="message"
-                        placeholder=""
-                        value={descricao}
-                        onChange={(e) => setDescricao(e.target.value)}
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="name">Tipo de Banca</div>
-                  <div className="value">
-                    <select
-                      className="input--style-6 form-control"
-                      value={tipoBanca}
-                      onChange={(e) => setTipoBanca(e.target.value)}
-                    >
-                      <option value="TCC_CURSO_TECNICO">
-                        TCC Curso Técnico
-                      </option>
-                      <option value="TCC_CURSO_SUPERIOR">
-                        TCC Curso Superior
-                      </option>
-                      <option value="MONOGRAFIA_SUPERIOR">
-                        Monografia Curso
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-row">
                   <div className="name">Tema</div>
                   <div className="value">
-                    <input
-                      className="input--style-6"
+                    <TextField required label="Tema da banca"
+                      fullWidth 
+                      variant="outlined"
                       type="text"
-                      name="full_name"
                       value={tema}
                       onChange={(e) => setTema(e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="form-row">
-                  <div className="name">Data de Agendamento</div>
-                  <div className="value form-outline">
-                    <input
-                      placeholder=""
-                      type="text"
-                      id=""
-                      className="input--style-6 form-control"
-                      value={dataAgendamento}
-                      onChange={(e) => setDataAgendamento(e.target.value)}
+                  <div className="name">Descrição</div>
+                  <div className="value">
+                    <TextField
+                      label="Descrição da banca"
+                      multiline
+                      fullWidth
+                      rows={4}
+                      value={descricao}
+                      onChange={(e) => setDescricao(e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="form-row">
+                  <div className="name">Data de Agendamento</div>
+                  <div className="value">
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DateTimePicker
+                        renderInput={(props) => <TextField fullWidth className="input--style-6 "{...props} />}
+                        label="Data de agendamento"
+                        value={dataAgendamento}
+                        onChange={(newValue) => {
+                          setDataAgendamento(newValue.toISOString().replace('T', ' ').substring(0, 16));
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="name">Tipo de Banca</div>
+                  <div className="value">
+                    <Select
+                      options={optionsBanca}
+                      placeholder="Selecione um tipo da banca"
+                      onChange={(data) => setTipoBanca(data.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
                   <div className="name">Participantes</div>
                   <div className="value">
-                    <select
-                      className="input-group form-control"
-                      value={listaIdParticipantes}
-                      onChange={(e) => setListaIdParticipantes(e.target.value)}
-                    >
-                      <option value="1">Participantes</option>
-                      <option value="2">teste2</option>
-                    </select>
+                    <Select
+                      options={optionsAlunos}
+                      placeholder="Participantes da banca"
+                      onChange={(data) => setListaIdParticipantes(
+                        data.map(user => user.value
+                        ))}
+                      isMulti
+                    />
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="name">Avaliadores</div>
                   <div className="value">
-                    <select
-                      className="input-group form-control"
-                      value={listaIdAvaliadores}
-                      onChange={(e) => setListaIdAvaliadores(e.target.value)}
-                    >
-                      <option value="1">Avaliadores</option>
-                      <option value="2">Testes</option>
-                    </select>
+                    <Select
+                      options={optionsProfessores}
+                      placeholder="Avaliadores da banca"
+                      onChange={(data) => setListaIdAvaliadores(data.map(user => user.value))}
+                      isMulti
+                    />
                   </div>
                 </div>
                 <div className="form-row">
-                  <div className="name">Status Agendamento</div>
+                  <div className="name">Status da Banca</div>
                   <div className="value">
-                    <select
-                      className="input-group form-control"
-                      value={statusAgendamento}
-                      onChange={(e) => setStatusAgendamento(e.target.value)}
-                    >
-                      <option value="AGENDADO">Agendado</option>
-                      <option value="AGUARDANDO">Aguardando</option>
-                      <option value="CANCELADO">Cancelado</option>
-                    </select>
+                    <Select
+                      options={optionsStatus}
+                      //defaultValue={}
+                      //value={statusAgendamento}
+                      placeholder="Status da banca"
+                      onChange={(data) => setStatusAgendamento(data.value)}
+                    />
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="name">Administradores da Banca</div>
                   <div className="value">
-                    <select
-                      className="input-group form-control"
-                      value={adminsBanca}
-                      onChange={(e) => setAdminsBanca(e.target.value)}
-                    >
-                      <option value="1">Avaliadores</option>
-                      <option value="2">Testes</option>
-                    </select>
+                    <Select
+                      options={optionsAdms}
+                      placeholder="Admins da banca"
+                      // value={adminsBanca}
+                      onChange={(data) => setListaIdAdms(data.map(user => user.value))}
+                      isMulti
+                    />
                   </div>
                 </div>
-                {/*<div className="form-row">
-                                    <div className="name">Upload CV</div>
-                                    <div className="value">
-                                        <div className="input-group js-input-file">
-                                            <input className="input-file" type="file" name="file_cv" id="file"/>
-                                            <label className="label--file" for="file">Choose file</label>
-                                            <span className="input-file__info">No file chosen</span>
-                                        </div>
-                                        <div className="label--desc">Upload your CV/Resume or any other relevant file. Max file size 50 MB</div>
-                                    </div>
-                                </div>*/}
                 <div className="card-footer">
                   <button
                     type="submit"
-                    className="btn btn--radius-2 btn--blue-2"
+                    className="btn btn--radius-2 btn--blue-2 float-right mb-5"
                   >
                     Salvar
                   </button>
-                  {/* onClick={event =>  window.location.href='./boards'} */}
                 </div>
               </form>
             </div>
@@ -300,4 +264,4 @@ function BancaDetailsById() {
   );
 }
 
-export default BancaDetailsById;
+export default Edit;

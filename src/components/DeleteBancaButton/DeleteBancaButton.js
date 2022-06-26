@@ -21,7 +21,7 @@ export default function DeleteBancaButton(props) {
         return <i
             id="icone-click"
             onClick={() => handleDeleteAgendamento(id)}
-            className="fa-solid fa-trash"
+            className="fa-solid fa-trash text-danger"
         ></i>
     
     return <div></div>

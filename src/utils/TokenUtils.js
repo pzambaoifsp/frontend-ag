@@ -10,7 +10,7 @@ function isProfessorOrAbove(token) {
     const hasAlunoPermission = tokenDecoded.permissions.indexOf('ALUNO') != -1
     const hasUsuarioPermission = tokenDecoded.permissions.indexOf('USUARIO') != -1
 
-    if (hasAlunoPermission || hasAlunoPermission) return false
+    if (hasAlunoPermission || hasUsuarioPermission) return false
 
     return true
 
