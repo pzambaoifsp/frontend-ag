@@ -13,6 +13,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider, MobileDateTimePicker, StaticDateTimePicker } from "@mui/x-date-pickers";
 import Header from "../components/Header/Header";
 import TokenUtils from "../utils/TokenUtils";
+import { toast } from "react-toastify";
 
 function Details() {
 
@@ -78,7 +79,8 @@ function Details() {
       navigate("/boards");
 
     } catch (error) {
-      console.log(`Erro ao realizar login: ${error.message}`);
+      const message = error.response.data.mensagem
+      toast.error(message)
     }
   };
 

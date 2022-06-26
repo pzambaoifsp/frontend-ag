@@ -52,7 +52,6 @@ function BancaDetailsById() {
 
     const response = AgendamentoDataSource.getAgendamentoById(token, id)
       .then((response) => {
-        console.log(response.data)
         setTitulo(response.data.data.titulo);
         setDescricao(response.data.data.descricao);
         setTipoBanca(response.data.data.tipoBanca);
@@ -76,6 +75,8 @@ function BancaDetailsById() {
     })
   }, [listaAvaliadores])
 
+  useEffect()
+
 
 
   useEffect(() => {
@@ -94,44 +95,6 @@ function BancaDetailsById() {
 
     setEnableToEdit(true)
   }, [adminsBanca])
-
-  function validateIfUserCanModify(usersBanca) {
-
-
-  }
-
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      const token = "Bearer " + localStorage.getItem("access_token");
-      const response = await api.put(
-        "/agendamentos/",
-        {
-          id: parseInt(id),
-          titulo,
-          descricao,
-          tipoBanca,
-          tema,
-          dataAgendamento,
-          listaIdParticipantes: [1],
-          listaIdAvaliadores: [2],
-          statusAgendamento,
-          adminsBanca: [2]
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
-      navigate("/boards");
-    } catch (error) {
-      console.log(`Erro ao editar: ${error.message}`);
-    }
-  };
 
   return (
     <div>

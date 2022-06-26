@@ -69,4 +69,40 @@ async function getAgendamentos(accessToken) {
   return response;
 }
 
-export default { addAgendamento, getAgendamentoById, deleteAgendamentoById, getAgendamentos } 
+async function updateAgendamento(
+  id,
+  titulo,
+  descricao,
+  tipoBanca,
+  tema,
+  dataAgendamento,
+  listaIdParticipantes,
+  listaIdAvaliadores,
+  statusAgendamento,
+  adminsBanca
+) {
+  const response = await api.put(
+    "/agendamentos/",
+    {
+      id: parseInt(id),
+      titulo,
+      descricao,
+      tipoBanca,
+      tema,
+      dataAgendamento,
+      listaIdParticipantes,
+      listaIdAvaliadores,
+      statusAgendamento,
+      adminsBanca
+    },
+    {
+      headers: {
+        Authorization: TokenUtils.getTokenOrEmptyToken(),
+      },
+    }
+  );
+
+  return response;
+}
+
+export default { addAgendamento, getAgendamentoById, deleteAgendamentoById, getAgendamentos, updateAgendamento } 
