@@ -1,29 +1,37 @@
-import React, { Component, useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import "../style/details.css";
-import Select from 'react-select';
-import FilterMembers from "../utils/FilterMembers";
-import AgendamentoDataSource from "../dataSource/AgendamentoDataSource";
-import UsersDataSource from "../dataSource/UsersDataSource";
-import Values from "../utils/Values";
+import jwtDecode from "jwt-decode";
+import React, { Component, useState, useEffect } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import Header from "../../components/Header/Header";
+import AgendamentoDataSource from "../../dataSource/AgendamentoDataSource";
+import api from "../../services/api";
+import "../../style/details.css";
+import TokenUtils from "../../utils/TokenUtils";
 import { Container, MenuItem, TextField } from "@mui/material";
-
-// date-fns
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider, MobileDateTimePicker, StaticDateTimePicker } from "@mui/x-date-pickers";
-import Header from "../components/Header/Header";
-import TokenUtils from "../utils/TokenUtils";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import Select from 'react-select';
+import Values from "../../utils/Values";
 
-function Details() {
+function Edit() {
+  const router = useParams();
+  const navigate = useNavigate();
+
+  const [id, setId] = useState();
+
+  const handleDeslog = async (event) => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+
+    Navigate("/login");
+  };
 
   const optionsStatus = Values.status
   const optionsBanca = Values.optionsBanca
 
-  const navigate = useNavigate();
-
   const [optionsAlunos, setOptionsAlunos] = useState([]);
   const [optionsProfessores, setOptionsProfessores] = useState([]);
   const [optionsAdms, setOptionsAdms] = useState([]);
+  const [listaIdAdms, setListaIdAdms] = useState([])
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tipoBanca, setTipoBanca] = useState("");
@@ -31,62 +39,97 @@ function Details() {
   const [dataAgendamento, setDataAgendamento] = useState("");
   const [listaIdParticipantes, setListaIdParticipantes] = useState("");
   const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
-  const [listaIdAdms, setListaIdAdms] = useState([])
   const [statusAgendamento, setStatusAgendamento] = useState("");
-  const [users, setUsers] = useState([]);
+  const [adminsBanca, setAdminsBanca] = useState([]);
+  const [enableToEdit, setEnableToEdit] = useState(false);
 
   useEffect(() => {
-    const token = TokenUtils.getTokenOrEmptyToken()
-    UsersDataSource.getUsers(token).then(res =>
-      setUsers(res.data.data)
-    );
+    const { id } = router;
+    setId(id);
 
-  }, [])
+    const token = TokenUtils.getTokenOrEmptyToken();
+
+    const response = AgendamentoDataSource.getAgendamentoById(token, id)
+      .then((response) => {
+        setTitulo(response.data.data.titulo);
+        setDescricao(response.data.data.descricao);
+        setTipoBanca(response.data.data.tipoBanca);
+        setTema(response.data.data.tema);
+        setDataAgendamento(
+          response.data.data.dataAgendamento.replace("T", " ")
+        );
+        setListaIdParticipantes(response.data.data.listaIdParticipantes);
+        setListaIdAvaliadores(response.data.data.listaIdAvaliadores);
+        setAdminsBanca(response.data.data.adminsBanca)
+        setStatusAgendamento(response.data.data.statusAgendamento);
+      });
+  }, []);
 
   useEffect(() => {
-    FilterMembers.membersAlunos(users).forEach(user => {
-      const value = { value: user.id, label: user.username }
+    const canEdit = false;
 
-      setOptionsAlunos(old => [...old, value]);
-    })
+    const token = TokenUtils.getTokenOrEmptyToken();
+    const tokenDecoded = jwtDecode(token)
+    console.log(tokenDecoded)
 
-    FilterMembers.membersProfessores(users).forEach(user => {
-      const value = { value: user.id, label: user.username }
+    console.log(adminsBanca)
+    //const isCurrentUserAdmin = adminsBanca.find(tokenDecoded.id)
+    /*
+    if (isCurrentUserAdmin || tokenDecoded.permission.find("ADMIN"))
+      canEdit = true
+    else
+      
+    canEdit = false
+    */
 
-      setOptionsProfessores(old => [...old, value]);
-      setOptionsAdms(old => [...old, value]);
-    })
-  }, [users])
+      setEnableToEdit(true)
+  }, [adminsBanca])
+
+  function validateIfUserCanModify(usersBanca) {
+
+
+  }
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = AgendamentoDataSource.addAgendamento(
-        titulo,
-        descricao,
-        tipoBanca,
-        tema,
-        dataAgendamento,
-        [parseInt(listaIdParticipantes)],
-        [parseInt(listaIdAvaliadores)],
-        statusAgendamento,
-        [parseInt(listaIdAvaliadores)]
+      const token = "Bearer " + localStorage.getItem("access_token");
+      console.log(token);
+
+      console.log(id);
+
+      const response = await api.put(
+        "/agendamentos/",
+        {
+          id: parseInt(id),
+          titulo,
+          descricao,
+          tipoBanca,
+          tema,
+          dataAgendamento,
+          listaIdParticipantes: [1],
+          listaIdAvaliadores: [2],
+          statusAgendamento,
+          adminsBanca: [2]
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
 
-
       navigate("/boards");
-
     } catch (error) {
-      console.log(`Erro ao realizar login: ${error.message}`);
+      console.log(`Erro ao editar: ${error.message}`);
     }
   };
 
   return (
     <div>
       <Header name={"Calendário"}></Header>
-
-      <h1 className="center title-board mt-5">Cadastro da banca</h1>
 
       <div className="page-wrapper">
         <div className="wrapper wrapper--w900">
@@ -221,4 +264,4 @@ function Details() {
   );
 }
 
-export default Details;
+export default Edit;

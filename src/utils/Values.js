@@ -1,7 +1,7 @@
 const status = [
-    { value: 'AGENDADO', label: 'Agendado' },
-    { value: 'AGUARDANDO', label: 'Aguardando' },
-    { value: 'CANCELADO', label: 'Cancelado' }
+    { value: 'AGENDADO', label: 'Banca Agendada' },
+    { value: 'AGUARDANDO', label: 'Aguardando confirmação dos participantes' },
+    { value: 'CANCELADO', label: 'Banca cancelada' }
 ]
 
 const optionsBanca = [
