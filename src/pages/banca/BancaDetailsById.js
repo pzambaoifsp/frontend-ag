@@ -4,7 +4,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import AgendamentoDataSource from "../../dataSource/AgendamentoDataSource";
 import api from "../../services/api";
 import "../../style/details.css";
-import getTokenOrEmptyToken from "../../utils/TokenUtils";
+import TokenUtils from "../../utils/TokenUtils";
 
 function BancaDetailsById() {
   const router = useParams();
@@ -34,7 +34,7 @@ function BancaDetailsById() {
     const { id } = router;
     setId(id);
 
-    const token = getTokenOrEmptyToken();
+    const token = TokenUtils.getTokenOrEmptyToken();
 
     const response = AgendamentoDataSource.getAgendamentoById(token, id)
       .then((response) => {
@@ -53,21 +53,6 @@ function BancaDetailsById() {
   }, []);
 
   useEffect(() => {
-    const canEdit = false;
-
-    const token = getTokenOrEmptyToken();
-    const tokenDecoded = jwtDecode(token)
-    console.log(tokenDecoded)
-
-    console.log(adminsBanca)
-    //const isCurrentUserAdmin = adminsBanca.find(tokenDecoded.id)
-    /*
-    if (isCurrentUserAdmin || tokenDecoded.permission.find("ADMIN"))
-      canEdit = true
-    else
-      
-    canEdit = false
-    */
 
       setEnableToEdit(true)
   }, [adminsBanca])

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import "../style/boards.css";
 import api from "../services/api";
+import Header from "../components/Header/Header";
 
 
 
@@ -35,45 +36,7 @@ export function Home() {
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container">
-          <a className="navbar-brand" href="/">
-            Calendário
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarsExample07"
-            aria-controls="navbarsExample07"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarsExample07">
-            <ul className="navbar-nav mr-auto">
-              <li className="nav-item active">
-                <a className="nav-link" href="#">
-                  <span className="sr-only">(current)</span>
-                </a>
-              </li>
-            </ul>
-            <form className="form-inline my-2 my-md-0">
-              <a className="nav-link twhite" href="/login">
-                Login
-              </a>
-              <a
-                className="nav-link twhite"
-                
-                href="/login"
-              >
-                Deslogar
-              </a>
-            </form>
-          </div>
-        </div>
-      </nav>
+      <Header name={"Calendário"}></Header>
 
       <div className="container align-center">
         <h1 className="center title-board">Bancas Cadastradas</h1>
