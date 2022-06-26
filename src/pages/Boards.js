@@ -63,6 +63,7 @@ function Boards() {
               <tr>
                 <th scope="row">{item.id}</th>
                 <td>{item.titulo}</td>
+                <td>{item.descricao}</td>
                 <td>{item.tipoBanca}</td>
                 <td>{item.tema}</td>
                 <td>{item.dataAgendamento}</td>
