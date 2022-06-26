@@ -11,6 +11,7 @@ import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider, MobileDate
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Select from 'react-select';
 import Values from "../../utils/Values";
+import InfoMembroNaBanca from "../../components/details/InfoMembroNaBanca";
 
 function BancaDetailsById() {
   const router = useParams();
@@ -29,7 +30,7 @@ function BancaDetailsById() {
   const optionsBanca = Values.optionsBanca
 
   const [optionsAlunos, setOptionsAlunos] = useState([]);
-  const [optionsProfessores, setOptionsProfessores] = useState([]);
+  const [htmlListaAvaliadores, setHtmlListaAvaliadores] = useState("");
   const [optionsAdms, setOptionsAdms] = useState([]);
   const [listaIdAdms, setListaIdAdms] = useState([])
   const [titulo, setTitulo] = useState("");
@@ -37,10 +38,10 @@ function BancaDetailsById() {
   const [tipoBanca, setTipoBanca] = useState("");
   const [tema, setTema] = useState("");
   const [dataAgendamento, setDataAgendamento] = useState("");
-  const [listaIdParticipantes, setListaIdParticipantes] = useState("");
-  const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
+  const [listaParticipantes, setListaParticipantes] = useState("");
+  const [listaAvaliadores, setListaAvaliadores] = useState([]);
   const [statusAgendamento, setStatusAgendamento] = useState("");
-  const [adminsBanca, setAdminsBanca] = useState([]);
+  const [adminsBanca, setAdminsBanca] = useState("");
   const [enableToEdit, setEnableToEdit] = useState(false);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ function BancaDetailsById() {
 
     const response = AgendamentoDataSource.getAgendamentoById(token, id)
       .then((response) => {
+        console.log(response.data)
         setTitulo(response.data.data.titulo);
         setDescricao(response.data.data.descricao);
         setTipoBanca(response.data.data.tipoBanca);
@@ -58,12 +60,23 @@ function BancaDetailsById() {
         setDataAgendamento(
           response.data.data.dataAgendamento.replace("T", " ")
         );
-        setListaIdParticipantes(response.data.data.listaIdParticipantes);
-        setListaIdAvaliadores(response.data.data.listaIdAvaliadores);
-        setAdminsBanca(response.data.data.adminsBanca)
+        setListaParticipantes(response.data.data.listaParticipantes);
+        setListaAvaliadores(response.data.data.listaAvaliadores);
+        setAdminsBanca(response.data.data.listaAdmins)
         setStatusAgendamento(response.data.data.statusAgendamento);
       });
   }, []);
+
+  useEffect(() => {
+    listaAvaliadores.forEach(avaliador => {
+      const divWithInfo =
+        <InfoMembroNaBanca username={avaliador.username} prontuario={avaliador.prontuario} statusAgendamento={avaliador.statusAgendamento} />
+
+      setHtmlListaAvaliadores(oldValues => [...oldValues, divWithInfo])
+    })
+  }, [listaAvaliadores])
+
+
 
   useEffect(() => {
     const canEdit = false;
@@ -79,7 +92,7 @@ function BancaDetailsById() {
     canEdit = false
     */
 
-      setEnableToEdit(true)
+    setEnableToEdit(true)
   }, [adminsBanca])
 
   function validateIfUserCanModify(usersBanca) {
@@ -128,7 +141,7 @@ function BancaDetailsById() {
           <table class="table table-striped mt-5">
             <thead>
               <tr>
-                <th className="mt-4"colspan="3"><font size='5'>Detalhes da Banca</font></th>
+                <th className="mt-4" colspan="3"><font size='5'>Detalhes da Banca</font></th>
               </tr>
             </thead>
           </table>
@@ -137,10 +150,10 @@ function BancaDetailsById() {
           <h4 className="mt-4"><b>Tipo de Banca: </b>{tipoBanca}</h4>
           <h4 className="mt-4"><b>Tema: </b>{tema}</h4>
           <h4 className="mt-4"><b>Apresentação: </b>{dataAgendamento}</h4>
-          <h4 className="mt-4"><b>Participantes: </b>{listaIdParticipantes}</h4>
-          <h4 className="mt-4"><b>Avaliadores: </b>{listaIdAvaliadores}</h4>
+          <h4 className="mt-4"><b>Participantes: </b>{ }</h4>
+          <h4 className="mt-4"><b>Avaliadores: </b>{htmlListaAvaliadores}</h4>
           <h4 className="mt-4"><b>Status: </b>{statusAgendamento}</h4>
-          <h4 className="mt-4"><b>Administradores: </b>{adminsBanca}</h4>
+          <h4 className="mt-4"><b>Administradores: </b>{ }</h4>
           <hr className="mt-4" />
         </div>
       </div>
