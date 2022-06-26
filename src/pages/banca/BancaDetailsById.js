@@ -12,7 +12,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Select from 'react-select';
 import Values from "../../utils/Values";
 
-function Edit() {
+function BancaDetailsById() {
   const router = useParams();
   const navigate = useNavigate();
 
@@ -79,9 +79,6 @@ function Edit() {
 
     const token = TokenUtils.getTokenOrEmptyToken();
     const tokenDecoded = jwtDecode(token)
-    console.log(tokenDecoded)
-
-    console.log(adminsBanca)
     //const isCurrentUserAdmin = adminsBanca.find(tokenDecoded.id)
     /*
     if (isCurrentUserAdmin || tokenDecoded.permission.find("ADMIN"))
@@ -105,10 +102,6 @@ function Edit() {
 
     try {
       const token = "Bearer " + localStorage.getItem("access_token");
-      console.log(token);
-
-      console.log(id);
-
       const response = await api.put(
         "/agendamentos/",
         {
@@ -139,138 +132,29 @@ function Edit() {
   return (
     <div>
       <Header name={"Calendário"}></Header>
-
-      <div className="page-wrapper">
-        <div className="wrapper wrapper--w900">
-          <div className="card card-6">
-            <div className="card-body">
-              <form method="POST" onSubmit={handleSubmit}>
-                <div className="form-row">
-                  <div className="name">Título</div>
-                  <div className="value">
-                    <TextField required label="Título da banca"
-                      fullWidth
-                      type="text"
-                      value={titulo}
-                      onChange={(e) => setTitulo(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="name">Tema</div>
-                  <div className="value">
-                    <TextField required label="Tema da banca"
-                      fullWidth 
-                      variant="outlined"
-                      type="text"
-                      value={tema}
-                      onChange={(e) => setTema(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="name">Descrição</div>
-                  <div className="value">
-                    <TextField
-                      label="Descrição da banca"
-                      multiline
-                      fullWidth
-                      rows={4}
-                      value={descricao}
-                      onChange={(e) => setDescricao(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="name">Data de Agendamento</div>
-                  <div className="value">
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                      <DateTimePicker
-                        renderInput={(props) => <TextField fullWidth className="input--style-6 "{...props} />}
-                        label="Data de agendamento"
-                        value={dataAgendamento}
-                        onChange={(newValue) => {
-                          setDataAgendamento(newValue.toISOString().replace('T', ' ').substring(0, 16));
-                        }}
-                      />
-                    </LocalizationProvider>
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="name">Tipo de Banca</div>
-                  <div className="value">
-                    <Select
-                      options={optionsBanca}
-                      placeholder="Selecione um tipo da banca"
-                      onChange={(data) => setTipoBanca(data.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="name">Participantes</div>
-                  <div className="value">
-                    <Select
-                      options={optionsAlunos}
-                      placeholder="Participantes da banca"
-                      onChange={(data) => setListaParticipantes(
-                        data.map(user => user.value
-                        ))}
-                      isMulti
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="name">Avaliadores</div>
-                  <div className="value">
-                    <Select
-                      options={optionsProfessores}
-                      placeholder="Avaliadores da banca"
-                      onChange={(data) => setListaAvaliadores(data.map(user => user.value))}
-                      isMulti
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="name">Status da Banca</div>
-                  <div className="value">
-                    <Select
-                      options={optionsStatus}
-                      //defaultValue={}
-                      //value={statusAgendamento}
-                      placeholder="Status da banca"
-                      onChange={(data) => setStatusAgendamento(data.value)}
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="name">Administradores da Banca</div>
-                  <div className="value">
-                    <Select
-                      options={optionsAdms}
-                      placeholder="Admins da banca"
-                      // value={adminsBanca}
-                      onChange={(data) => setListaIdAdms(data.map(user => user.value))}
-                      isMulti
-                    />
-                  </div>
-                </div>
-                <div className="card-footer">
-                  <button
-                    type="submit"
-                    className="btn btn--radius-2 btn--blue-2 float-right mb-5"
-                  >
-                    Salvar
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+      <div className="wrrapper wapper--w900">
+        <div class="container">
+          <table class="table table-striped mt-5">
+            <thead>
+              <tr>
+                <th className="mt-4"colspan="3"><font size='5'>Detalhes da Banca</font></th>
+              </tr>
+            </thead>
+          </table>
+          <h4 className="mt-4"><b>Banca: </b>{titulo}</h4>
+          <h4 className="mt-4"><b>Descrição: </b>{descricao}</h4>
+          <h4 className="mt-4"><b>Tipo de Banca: </b>{tipoBanca}</h4>
+          <h4 className="mt-4"><b>Tema: </b>{tema}</h4>
+          <h4 className="mt-4"><b>Apresentação: </b>{dataAgendamento}</h4>
+          <h4 className="mt-4"><b>Participantes: </b>{listaIdParticipantes}</h4>
+          <h4 className="mt-4"><b>Avaliadores: </b>{listaIdAvaliadores}</h4>
+          <h4 className="mt-4"><b>Status: </b>{statusAgendamento}</h4>
+          <h4 className="mt-4"><b>Administradores: </b>{adminsBanca}</h4>
+          <hr className="mt-4" />
         </div>
       </div>
     </div>
   );
 }
 
-export default Edit;
+export default BancaDetailsById;
