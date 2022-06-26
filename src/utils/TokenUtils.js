@@ -16,4 +16,17 @@ function isProfessorOrAbove(token) {
 
 }
 
-export default {getTokenOrEmptyToken, isProfessorOrAbove}
+function informacoesDoToken(token) {
+    const tokenDecoded = jwtDecode(token);
+
+    return {
+        exp: tokenDecoded.exp,
+        userId: tokenDecoded.id,
+        iss: tokenDecoded.iss,
+        userRoles: tokenDecoded.permissions,
+        userEmail: tokenDecoded.sub
+    }
+
+}
+
+export default {getTokenOrEmptyToken, isProfessorOrAbove, informacoesDoToken}
