@@ -37,8 +37,8 @@ function Edit() {
   const [tipoBanca, setTipoBanca] = useState("");
   const [tema, setTema] = useState("");
   const [dataAgendamento, setDataAgendamento] = useState("");
-  const [listaIdParticipantes, setListaIdParticipantes] = useState("");
-  const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
+  const [listaParticipantes, setListaParticipantes] = useState([]);
+  const [listaAvaliadores, setListaAvaliadores] = useState([]);
   const [statusAgendamento, setStatusAgendamento] = useState("");
   const [adminsBanca, setAdminsBanca] = useState([]);
   const [enableToEdit, setEnableToEdit] = useState(false);
@@ -51,6 +51,7 @@ function Edit() {
 
     const response = AgendamentoDataSource.getAgendamentoById(token, id)
       .then((response) => {
+        console.log(response.data)
         setTitulo(response.data.data.titulo);
         setDescricao(response.data.data.descricao);
         setTipoBanca(response.data.data.tipoBanca);
@@ -58,12 +59,20 @@ function Edit() {
         setDataAgendamento(
           response.data.data.dataAgendamento.replace("T", " ")
         );
-        setListaIdParticipantes(response.data.data.listaIdParticipantes);
-        setListaIdAvaliadores(response.data.data.listaIdAvaliadores);
-        setAdminsBanca(response.data.data.adminsBanca)
+        setListaParticipantes(response.data.data.listaParticipantes);
+        setListaAvaliadores(response.data.data.listaAvaliadores);
+        setAdminsBanca(response.data.data.listaAdmins)
         setStatusAgendamento(response.data.data.statusAgendamento);
       });
   }, []);
+
+  useEffect(() => {
+    listaAvaliadores.forEach(usuario =>{
+      const value = {value: usuario.id, label: usuario.username}
+
+      setOptionsProfessores(oldValues =>[...oldValues,value]);
+    })
+  },[listaAvaliadores])
 
   useEffect(() => {
     const canEdit = false;
@@ -205,7 +214,7 @@ function Edit() {
                     <Select
                       options={optionsAlunos}
                       placeholder="Participantes da banca"
-                      onChange={(data) => setListaIdParticipantes(
+                      onChange={(data) => setListaParticipantes(
                         data.map(user => user.value
                         ))}
                       isMulti
@@ -218,7 +227,7 @@ function Edit() {
                     <Select
                       options={optionsProfessores}
                       placeholder="Avaliadores da banca"
-                      onChange={(data) => setListaIdAvaliadores(data.map(user => user.value))}
+                      onChange={(data) => setListaAvaliadores(data.map(user => user.value))}
                       isMulti
                     />
                   </div>
