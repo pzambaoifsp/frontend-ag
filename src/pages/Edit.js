@@ -144,8 +144,9 @@ function Edit() {
         listaIdParticipantes,
         listaIdAvaliadores,
         statusAgendamento,
-        listaIdAdms
-      );
+        listaIdAdms,
+        (listaAdmins) ? listaAdmins.map(admin => admin.id) : []
+      )
 
       response.then(
         navigate("/boards")

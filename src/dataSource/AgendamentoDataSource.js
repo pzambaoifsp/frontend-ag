@@ -79,7 +79,8 @@ async function updateAgendamento(
   listaIdParticipantes,
   listaIdAvaliadores,
   statusAgendamento,
-  adminsBanca
+  adminsBanca,
+  antigaListaIdAdmins
 ) {
   const response = await api.put(
     "/agendamentos/",
@@ -100,7 +101,30 @@ async function updateAgendamento(
         Authorization: TokenUtils.getTokenOrEmptyToken(),
       },
     }
-  );
+  )
+
+  if (response.status == 200) {
+    const idsParaRemover = antigaListaIdAdmins.filter(idUsuario => adminsBanca.indexOf(idUsuario) == -1);
+    const idsParaAdicionar = adminsBanca.filter(idUsuario => antigaListaIdAdmins.indexOf(idUsuario) == -1)
+    idsParaAdicionar.forEach(idUsuario => {
+      api.post(`/agendamentos/add-admin/${id}/${idUsuario}`,{},{
+        headers: {
+          Authorization: TokenUtils.getTokenOrEmptyToken(),
+        },
+      });
+    })
+    console.log(idsParaRemover)
+    idsParaRemover.forEach(idUsuario => {
+      console.log(idUsuario)
+      api.post(`/agendamentos/delete-admin/${id}/${idUsuario}`,{},{
+        headers: {
+          Authorization: TokenUtils.getTokenOrEmptyToken(),
+        },
+      });
+    })
+  }
+
+  
 
   return response;
 }
