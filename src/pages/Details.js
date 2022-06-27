@@ -63,16 +63,16 @@ function Details() {
     event.preventDefault();
 
     try {
-      const response = AgendamentoDataSource.addAgendamento(
+      const response = await AgendamentoDataSource.addAgendamento(
         titulo,
         descricao,
         tipoBanca,
         tema,
         dataAgendamento,
-        [parseInt(listaIdParticipantes)],
-        [parseInt(listaIdAvaliadores)],
+        listaIdParticipantes,
+        listaIdAvaliadores,
         statusAgendamento,
-        [parseInt(listaIdAvaliadores)]
+        listaIdAvaliadores
       );
 
 
