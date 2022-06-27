@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import "../style/boards.css";
 import api from "../services/api";
 import Header from "../components/Header/Header";
+import formatDate from "../utils/FormatDate";
 
 
 
@@ -49,7 +50,6 @@ export function Home() {
               <th scope="col">Tipo de banca</th>
               <th scope="col">Tema</th>
               <th scope="col">Apresentação</th>
-              <th scope="col">Participantes</th>
               <th scope="col">Status</th>
             </tr>
           </thead>
@@ -61,9 +61,8 @@ export function Home() {
                 <td>{item.descricao}</td>
                 <td>{item.tipoBanca}</td>
                 <td>{item.tema}</td>
-                <td>{item.dataAgendamento}</td>
-                <td>{item.participantes}</td>
-                <td className="st-status">{item.agendamento}</td>
+                <td>{formatDate(item.dataAgendamento)}</td>
+                <td className="st-status">{item.statusAgendamento}</td>
               </tr>
             ))}
           </tbody>
