@@ -32,7 +32,7 @@ function Details() {
   const [listaIdParticipantes, setListaIdParticipantes] = useState("");
   const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
   const [listaIdAdms, setListaIdAdms] = useState([])
-  const [statusAgendamento, setStatusAgendamento] = useState("");
+  const [statusAgendamento, setStatusAgendamento] = useState("AGUARDANDO");
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -177,18 +177,6 @@ function Details() {
                       placeholder="Avaliadores da banca"
                       onChange={(data) => setListaIdAvaliadores(data.map(user => user.value))}
                       isMulti
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="name">Status da Banca</div>
-                  <div className="value">
-                    <Select
-                      options={optionsStatus}
-                      //defaultValue={}
-                      //value={statusAgendamento}
-                      placeholder="Status da banca"
-                      onChange={(data) => setStatusAgendamento(data.value)}
                     />
                   </div>
                 </div>

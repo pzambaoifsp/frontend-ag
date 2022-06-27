@@ -1,17 +1,14 @@
 import jwtDecode from "jwt-decode";
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import AgendamentoDataSource from "../../dataSource/AgendamentoDataSource";
-import api from "../../services/api";
 import "../../style/details.css";
 import TokenUtils from "../../utils/TokenUtils";
-import { Container, MenuItem, TextField } from "@mui/material";
-import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider, MobileDateTimePicker, StaticDateTimePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import Select from 'react-select';
-import Values from "../../utils/Values";
 import InfoMembroNaBanca from "../../components/details/InfoMembroNaBanca";
+import "../../style/detailsbyid.css";
+import formatDate from "../../utils/FormatDate";
+
 
 function BancaDetailsById() {
   const router = useParams();
@@ -19,29 +16,18 @@ function BancaDetailsById() {
 
   const [id, setId] = useState();
 
-  const handleDeslog = async (event) => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-
-    Navigate("/login");
-  };
-
-  const optionsStatus = Values.status
-  const optionsBanca = Values.optionsBanca
-
-  const [optionsAlunos, setOptionsAlunos] = useState([]);
   const [htmlListaAvaliadores, setHtmlListaAvaliadores] = useState("");
-  const [optionsAdms, setOptionsAdms] = useState([]);
-  const [listaIdAdms, setListaIdAdms] = useState([])
+  const [htmlListaParticipantes, setHtmlListaParticipantes] = useState("");
+  const [htmlListaAdministradores, setHtmlListaAdministradores] = useState("");
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tipoBanca, setTipoBanca] = useState("");
   const [tema, setTema] = useState("");
   const [dataAgendamento, setDataAgendamento] = useState("");
-  const [listaParticipantes, setListaParticipantes] = useState("");
+  const [listaParticipantes, setListaParticipantes] = useState([]);
   const [listaAvaliadores, setListaAvaliadores] = useState([]);
   const [statusAgendamento, setStatusAgendamento] = useState("");
-  const [adminsBanca, setAdminsBanca] = useState("");
+  const [adminsBanca, setAdminsBanca] = useState([]);
   const [enableToEdit, setEnableToEdit] = useState(false);
 
   useEffect(() => {
@@ -58,7 +44,7 @@ function BancaDetailsById() {
         setTipoBanca(response.data.data.tipoBanca);
         setTema(response.data.data.tema);
         setDataAgendamento(
-          response.data.data.dataAgendamento.replace("T", " ")
+          formatDate(response.data.data.dataAgendamento)
         );
         setListaParticipantes(response.data.data.listaParticipantes);
         setListaAvaliadores(response.data.data.listaAvaliadores);
@@ -76,6 +62,23 @@ function BancaDetailsById() {
     })
   }, [listaAvaliadores])
 
+  useEffect(() => {
+    listaParticipantes.forEach(participante => {
+      const divWithInfo =
+        <InfoMembroNaBanca username={participante.username} prontuario={participante.prontuario} statusAgendamento={participante.statusAgendamento} />
+
+      setHtmlListaParticipantes(oldValues => [...oldValues, divWithInfo])
+    })
+  }, [listaParticipantes])
+
+  useEffect(() => {
+    adminsBanca.forEach(administrador => {
+      const divWithInfo =
+        <InfoMembroNaBanca username={administrador.username} prontuario={administrador.prontuario} statusAgendamento={administrador.statusAgendamento} />
+
+      setHtmlListaAdministradores(oldValues => [...oldValues, divWithInfo])
+    })
+  }, [adminsBanca])
 
 
   useEffect(() => {
@@ -95,68 +98,137 @@ function BancaDetailsById() {
     setEnableToEdit(true)
   }, [adminsBanca])
 
-  function validateIfUserCanModify(usersBanca) {
 
-
-  }
-
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      const token = "Bearer " + localStorage.getItem("access_token");
-      const response = await api.put(
-        "/agendamentos/",
-        {
-          id: parseInt(id),
-          titulo,
-          descricao,
-          tipoBanca,
-          tema,
-          dataAgendamento,
-          listaIdParticipantes: [1],
-          listaIdAvaliadores: [2],
-          statusAgendamento,
-          adminsBanca: [2]
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
-      navigate("/boards");
-    } catch (error) {
-      console.log(`Erro ao editar: ${error.message}`);
-    }
-  };
 
   return (
     <div>
       <Header name={"Calendário"}></Header>
-      <div className="wrrapper wapper--w900">
+      <div className="wrapper wapper--w900">
         <div class="container">
           <table class="table table-striped mt-5">
             <thead>
               <tr>
-                <th className="mt-4" colspan="3"><font size='5'>Detalhes da Banca</font></th>
+                <th><font size='5' style={{ textTransform: 'uppercase'}}>{titulo}</font></th>
               </tr>
             </thead>
           </table>
-          <h4 className="mt-4"><b>Banca: </b>{titulo}</h4>
-          <h4 className="mt-4"><b>Descrição: </b>{descricao}</h4>
-          <h4 className="mt-4"><b>Tipo de Banca: </b>{tipoBanca}</h4>
-          <h4 className="mt-4"><b>Tema: </b>{tema}</h4>
-          <h4 className="mt-4"><b>Apresentação: </b>{dataAgendamento}</h4>
-          <h4 className="mt-4"><b>Participantes: </b>{ }</h4>
-          <h4 className="mt-4"><b>Avaliadores: </b>{htmlListaAvaliadores}</h4>
-          <h4 className="mt-4"><b>Status: </b>{statusAgendamento}</h4>
-          <h4 className="mt-4"><b>Administradores: </b>{ }</h4>
-          <hr className="mt-4" />
+          <div className="contact-info-section margin-60px-tb">
+              <ul className="list-style9 no-margin">
+                <li>
+                  <div className="row">
+                    <div className="col-md-6 col-6">
+                      <i className="fa-solid fa-align-justify"></i>
+                      <strong className="margin-10px-left ml-2">
+                        Descrição:
+                      </strong>
+                    </div>
+                    <div className="col-md-6 col-6">
+                      <p>{descricao}</p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div className="row">
+                    <div className="col-md-6 col-6">
+                      <i className="fas fa-graduation-cap" />
+                      <strong className="margin-10px-left ml-2">
+                        Tipo de banca:
+                      </strong>
+                    </div>
+                    <div className="col-md-6 col-6">
+                      <p>{tipoBanca}</p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div className="row">
+                    <div className="col-md-6 col-6">
+                      <i className="fa-solid fa-clipboard-list" />
+                      <strong className="margin-10px-left ml-2">
+                        Tema:
+                      </strong>
+                    </div>
+                    <div className="col-md-6 col-6">
+                      <p>{tema}</p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div className="row">
+                    <div className="col-md-6 col-6">
+                      <i className="far fa-calendar-alt" />
+                      <strong className="margin-10px- ml-2">
+                        Data da apresentação:
+                      </strong>
+                    </div>
+                    <div className="col-md-6 col-6">
+                      <p>{dataAgendamento}</p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div className="row">
+                    <div className="col-md-6 col-6">
+                      <i className="fa-solid fa-users" />
+                      <strong className="margin-10px-left ml-2">
+                        Participantes:
+                      </strong>
+                    </div>
+                    <div className="col-md-6 col-6">
+                      <p>{htmlListaParticipantes}</p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div className="row">
+                    <div className="col-md-6 col-6">
+                      <i className="fa-solid fa-people-group" />
+                      <strong className="margin-10px-left xs-margin-four-left ml-2">
+                        Avaliadores:
+                      </strong>
+                    </div>
+                    <div className="col-md-6 col-6">
+                      <p>{htmlListaAvaliadores}</p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div className="row">
+                    <div className="col-md-6 col-6">
+                      <i className="fas fa-clipboard-user" />
+                      <strong className="margin-10px-left xs-margin-four-left ml-2">
+                        Administradores:
+                      </strong>
+                    </div>
+                    <div className="col-md-6 col-6">
+                      <p>
+                        <p>{htmlListaAdministradores}</p>
+                      </p>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div className="row">
+                    <div className="col-md-6 col-6">
+                      <i className="fas fa-graduation-cap" />
+                      <strong className="margin-10px-left ml-2">
+                        Status:
+                      </strong>
+                    </div>
+                    <div className="col-md-6 col-6">
+                      <p>{statusAgendamento}</p>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          
         </div>
       </div>
+
+
+
+      
     </div>
   );
 }

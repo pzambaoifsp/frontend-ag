@@ -11,6 +11,7 @@ import ViewDetailsBancaButton from "../components/viewDetailsBancaButton";
 import AgendamentoDataSource from "../dataSource/AgendamentoDataSource";
 import api from "../services/api";
 import "../style/boards.css";
+import formatDate from "../utils/FormatDate";
 import TokenUtils from "../utils/TokenUtils";
 
 function Boards() {
@@ -66,11 +67,8 @@ function Boards() {
                 <td>{item.descricao}</td>
                 <td>{item.tipoBanca}</td>
                 <td>{item.tema}</td>
-                <td>{item.dataAgendamento}</td>
-                <td>{item.participantes}</td>
-                <td>{item.avaliadores}</td>
-                <td className="st-status">{item.agendamento}</td>
-                <td>{item.adminsBanca}</td>
+                <td>{formatDate(item.dataAgendamento)}</td>
+                <td className="st-status">{item.statusAgendamento}</td>
                 <td>
                   <DeleteBancaButton id={item.id} isEnabledToDelete={hasPermissionToManageThisBanca(item.id)} />
                 </td>
