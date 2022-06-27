@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import AgendamentoDataSource from "../../dataSource/AgendamentoDataSource";
 import TokenUtils from "../../utils/TokenUtils";
 
@@ -7,10 +8,12 @@ export default function DeleteBancaButton(props) {
 
     const id = props.id
 
-    const handleDeleteAgendamento = (id) => {
+    const handleDeleteAgendamento = async (id) => {
         const token = TokenUtils.getTokenOrEmptyToken()
     
-        const response = AgendamentoDataSource.deleteAgendamentoById(token, id).then(
+        const response = await AgendamentoDataSource.deleteAgendamentoById(token, id)
+
+        response.then(
             reloadPage()
         )
       };

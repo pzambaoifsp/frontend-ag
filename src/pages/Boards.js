@@ -2,6 +2,7 @@ import { Container, Table } from "@mui/material";
 import jwtDecode from "jwt-decode";
 import React, { Component, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import AddBancaButton from "../components/AddBancaButton/AddBancaButton";
 import BancasTableHead from "../components/BancasTable/Head";
 import DeleteBancaButton from "../components/DeleteBancaButton/DeleteBancaButton";
@@ -31,6 +32,8 @@ function Boards() {
 
       setAgendamentos(response.data.data);
     } catch (error) {
+      const message = error.response.data.mensagem
+      toast.error(message)
       console.log(`Erro ao carregar agendamentos: ${error.message}`);
     }
   };
