@@ -1,29 +1,25 @@
 import jwtDecode from "jwt-decode";
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header/Header";
 import AgendamentoDataSource from "../dataSource/AgendamentoDataSource";
 import api from "../services/api";
 import "../style/details.css";
 import TokenUtils from "../utils/TokenUtils";
-import { Container, MenuItem, TextField } from "@mui/material";
-import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider, MobileDateTimePicker, StaticDateTimePicker } from "@mui/x-date-pickers";
+import { TextField } from "@mui/material";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Select from 'react-select';
 import Values from "../utils/Values";
+import UsersDataSource from "../dataSource/UsersDataSource";
+import FilterMembers from "../utils/FilterMembers";
+import { toast } from "react-toastify";
 
 function Edit() {
   const router = useParams();
   const navigate = useNavigate();
 
   const [id, setId] = useState();
-
-  const handleDeslog = async (event) => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-
-    Navigate("/login");
-  };
 
   const optionsStatus = Values.status
   const optionsBanca = Values.optionsBanca
@@ -39,9 +35,16 @@ function Edit() {
   const [dataAgendamento, setDataAgendamento] = useState("");
   const [listaIdParticipantes, setListaIdParticipantes] = useState("");
   const [listaIdAvaliadores, setListaIdAvaliadores] = useState("");
+  const [listaParticipantes, setListaParticipantes] = useState([]);
+  const [listaAvaliadores, setListaAvaliadores] = useState([]);
   const [statusAgendamento, setStatusAgendamento] = useState("");
-  const [adminsBanca, setAdminsBanca] = useState([]);
-  const [enableToEdit, setEnableToEdit] = useState(false);
+  const [listaAdmins, setListaAdmins] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [valueAlunos, setValueAlunos] = useState([]);
+  const [valueProfessores, setValueProfessores] = useState([]);
+  const [valueAdmins, setValueAdmins] = useState([]);
+  const [valueStatus, setValueStatus] = useState();
+  const [valueTipoBanca, setValueTipoBanca] = useState();
 
   useEffect(() => {
     const { id } = router;
@@ -49,45 +52,81 @@ function Edit() {
 
     const token = TokenUtils.getTokenOrEmptyToken();
 
-    const response = AgendamentoDataSource.getAgendamentoById(token, id)
+    AgendamentoDataSource.getAgendamentoById(token, id)
       .then((response) => {
-        setTitulo(response.data.data.titulo);
-        setDescricao(response.data.data.descricao);
-        setTipoBanca(response.data.data.tipoBanca);
-        setTema(response.data.data.tema);
-        setDataAgendamento(
-          response.data.data.dataAgendamento.replace("T", " ")
-        );
-        setListaIdParticipantes(response.data.data.listaIdParticipantes);
-        setListaIdAvaliadores(response.data.data.listaIdAvaliadores);
-        setAdminsBanca(response.data.data.adminsBanca)
-        setStatusAgendamento(response.data.data.statusAgendamento);
+        setInfoOnConstants(response.data.data)
       });
+
+    UsersDataSource.getUsers(token).then(res =>
+      setUsers(res.data.data)
+    );
   }, []);
 
   useEffect(() => {
-    const canEdit = false;
+    FilterMembers.membersAlunos(users).forEach(user => {
 
-    const token = TokenUtils.getTokenOrEmptyToken();
-    const tokenDecoded = jwtDecode(token)
-    console.log(tokenDecoded)
+      const value = { value: user.id, label: user.username }
+      setOptionsAlunos(old => [...old, value]);
 
-    console.log(adminsBanca)
-    //const isCurrentUserAdmin = adminsBanca.find(tokenDecoded.id)
-    /*
-    if (isCurrentUserAdmin || tokenDecoded.permission.find("ADMIN"))
-      canEdit = true
-    else
-      
-    canEdit = false
-    */
+    });
+    FilterMembers.membersProfessores(users).forEach(user => {
+      const value = { value: user.id, label: user.username }
 
-      setEnableToEdit(true)
-  }, [adminsBanca])
+      setOptionsProfessores(old => [...old, value]);
+      setOptionsAdms(old => [...old, value]);
+    })
+  }, [users])
 
-  function validateIfUserCanModify(usersBanca) {
+  useEffect(() => {
+    const listaIdParticipantesUseEffect = listaParticipantes.map(participante => participante.id)
+    const participantesQueExisteNoOptionsAlunos = optionsAlunos.filter(option => listaIdParticipantesUseEffect.indexOf(option.value) != -1)
+    setValueAlunos(participantesQueExisteNoOptionsAlunos)
+    setListaIdParticipantes(participantesQueExisteNoOptionsAlunos.map(option => option.value))
+  }, [listaParticipantes, optionsAlunos])
 
+  useEffect(() => {
+    const listaIdAvaliadoresUseEffect = listaAvaliadores.map(avaliador => avaliador.id)
+    const participantesQueExisteNoOptionsProfessores = optionsProfessores.filter(option => listaIdAvaliadoresUseEffect.indexOf(option.value) != -1)
+    setValueProfessores(participantesQueExisteNoOptionsProfessores)
+    setListaIdAvaliadores(participantesQueExisteNoOptionsProfessores.map(option => option.value))
+  }, [listaAvaliadores, optionsProfessores])
 
+  useEffect(() => {
+    const listaIdAdminsUseEffect = (listaAdmins) ? listaAdmins.map(admin => admin.id) : []
+    const adminsQueExisteNoOptionsAdmins = optionsAdms.filter(option => listaIdAdminsUseEffect.indexOf(option.value) != -1)
+    setValueAdmins(adminsQueExisteNoOptionsAdmins)
+    setListaIdAdms(adminsQueExisteNoOptionsAdmins.map(option => option.value))
+  }, [listaAdmins, optionsAdms])
+
+  useEffect(() => {
+    const statusSelected = optionsStatus.filter(option => option.value === statusAgendamento)
+    setValueStatus(statusSelected)
+  }, [statusAgendamento])
+
+  useEffect(() => {
+    const tipoBancaSelected = optionsBanca.filter(option => option.value === tipoBanca)
+    setValueTipoBanca(tipoBancaSelected)
+  }, [tipoBanca])
+
+  function setInfoOnConstants(data) {
+    setTitulo(data.titulo);
+    setDescricao(data.descricao);
+    setTipoBanca(data.tipoBanca);
+    setTema(data.tema);
+    setDataAgendamento(data.dataAgendamento.replace("T", " "));
+    setListaParticipantes(data.listaParticipantes);
+    setListaAvaliadores(data.listaAvaliadores);
+    setListaAdmins(data.listaAdmins)
+    setStatusAgendamento(data.statusAgendamento);
+  }
+
+  function validateAndSetDateAgendamento(stringDate) {
+    try {
+      const newDate = stringDate.toISOString().replace('T', ' ').substring(0, 16)
+      setDataAgendamento(newDate)
+    } catch (exception) {
+      document.getElementById('input-dtp-dataAgendamento')
+    }
   }
 
 
@@ -95,35 +134,26 @@ function Edit() {
     event.preventDefault();
 
     try {
-      const token = "Bearer " + localStorage.getItem("access_token");
-      console.log(token);
-
-      console.log(id);
-
-      const response = await api.put(
-        "/agendamentos/",
-        {
-          id: parseInt(id),
-          titulo,
-          descricao,
-          tipoBanca,
-          tema,
-          dataAgendamento,
-          listaIdParticipantes: [1],
-          listaIdAvaliadores: [2],
-          statusAgendamento,
-          adminsBanca: [2]
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+      const response = await AgendamentoDataSource.updateAgendamento(
+        id,
+        titulo,
+        descricao,
+        tipoBanca,
+        tema,
+        dataAgendamento,
+        listaIdParticipantes,
+        listaIdAvaliadores,
+        statusAgendamento,
+        listaIdAdms
       );
 
-      navigate("/boards");
+      response.then(
+        navigate("/boards")
+      )
+
     } catch (error) {
-      console.log(`Erro ao editar: ${error.message}`);
+      const message = error.response.data.mensagem
+      toast.error(message)
     }
   };
 
@@ -151,7 +181,7 @@ function Edit() {
                   <div className="name">Tema</div>
                   <div className="value">
                     <TextField required label="Tema da banca"
-                      fullWidth 
+                      fullWidth
                       variant="outlined"
                       type="text"
                       value={tema}
@@ -177,11 +207,14 @@ function Edit() {
                   <div className="value">
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DateTimePicker
+                        id="input-dtp-dataAgendamento"
                         renderInput={(props) => <TextField fullWidth className="input--style-6 "{...props} />}
                         label="Data de agendamento"
-                        value={dataAgendamento}
+                        value={dataAgendamento.replace(" ", "T")}
+                        inputFormat="dd/MM/yyyy hh:mm a"
+
                         onChange={(newValue) => {
-                          setDataAgendamento(newValue.toISOString().replace('T', ' ').substring(0, 16));
+                          validateAndSetDateAgendamento(newValue)
                         }}
                       />
                     </LocalizationProvider>
@@ -193,6 +226,7 @@ function Edit() {
                   <div className="value">
                     <Select
                       options={optionsBanca}
+                      value={valueTipoBanca}
                       placeholder="Selecione um tipo da banca"
                       onChange={(data) => setTipoBanca(data.value)}
                     />
@@ -203,11 +237,14 @@ function Edit() {
                   <div className="name">Participantes</div>
                   <div className="value">
                     <Select
-                      options={optionsAlunos}
                       placeholder="Participantes da banca"
-                      onChange={(data) => setListaIdParticipantes(
-                        data.map(user => user.value
-                        ))}
+                      options={optionsAlunos}
+                      value={valueAlunos}
+                      onChange={(data) => {
+                        setValueAlunos(data)
+                        setListaIdParticipantes(data.map(user => user.value))
+                      }
+                      }
                       isMulti
                     />
                   </div>
@@ -217,8 +254,12 @@ function Edit() {
                   <div className="value">
                     <Select
                       options={optionsProfessores}
-                      placeholder="Avaliadores da banca"
-                      onChange={(data) => setListaIdAvaliadores(data.map(user => user.value))}
+                      value={valueProfessores}
+                      placeholder="Avaliadores da bancas"
+                      onChange={(data) => {
+                        setValueProfessores(data)
+                        setListaIdAvaliadores(data.map(user => user.value))
+                      }}
                       isMulti
                     />
                   </div>
@@ -227,7 +268,9 @@ function Edit() {
                   <div className="name">Status da Banca</div>
                   <div className="value">
                     <Select
+                      isDisabled={true}
                       options={optionsStatus}
+                      value={valueStatus}
                       //defaultValue={}
                       //value={statusAgendamento}
                       placeholder="Status da banca"
@@ -240,9 +283,12 @@ function Edit() {
                   <div className="value">
                     <Select
                       options={optionsAdms}
+                      value={valueAdmins}
                       placeholder="Admins da banca"
-                      // value={adminsBanca}
-                      onChange={(data) => setListaIdAdms(data.map(user => user.value))}
+                      onChange={(data) => {
+                        setValueAdmins(data)
+                        setListaIdAdms(data.map(user => user.value))
+                      }}
                       isMulti
                     />
                   </div>
@@ -260,6 +306,8 @@ function Edit() {
           </div>
         </div>
       </div>
+
+      
     </div>
   );
 }
