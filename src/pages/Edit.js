@@ -1,7 +1,6 @@
 import jwtDecode from "jwt-decode";
 import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import Header from "../components/Header/Header";
 import AgendamentoDataSource from "../dataSource/AgendamentoDataSource";
 import api from "../services/api";
 import "../style/details.css";
@@ -14,6 +13,7 @@ import Values from "../utils/Values";
 import UsersDataSource from "../dataSource/UsersDataSource";
 import FilterMembers from "../utils/FilterMembers";
 import { toast } from "react-toastify";
+import Header from "../components/Header/Header";
 
 function Edit() {
   const router = useParams();
@@ -159,7 +159,7 @@ function Edit() {
 
   return (
     <div>
-      <Header name={"Calendário"}></Header>
+      <Header name={"Calendário de Bancas"}></Header>
 
       <div className="page-wrapper">
         <div className="wrapper wrapper--w900">

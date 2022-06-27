@@ -86,7 +86,7 @@ function Details() {
 
   return (
     <div>
-      <Header name={"Calendário"}></Header>
+      <Header name={"Calendário de Bancas"}></Header>
 
       <h1 className="center title-board mt-5">Cadastro da banca</h1>
 
@@ -194,14 +194,14 @@ function Details() {
                     />
                   </div>
                 </div>
-                <div className="card-footer">
+                <div className="card-footer mb-5">
                   <button
                     type="submit"
                     className="btn btn--radius-2 btn--blue-2 float-right mb-5"
                   >
                     Salvar
                   </button>
-                </div>
+                </div><br />
               </form>
             </div>
           </div>

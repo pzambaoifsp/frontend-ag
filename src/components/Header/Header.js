@@ -10,7 +10,7 @@ export default function Header(props) {
       };
     const name = props.name
 
-    return <div><nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    return <div><nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-6">
     <div className="container">
       <a className="navbar-brand" href="/">
         {name}

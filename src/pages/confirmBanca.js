@@ -35,7 +35,7 @@ function ConfirmBanca() {
   return (
     <div>
       <div className="appForm mt-5">
-        <h1 className="center formFieldEC">CONFIRMAR PARTICIPAÇÃO</h1>
+        <h1 className="center formFieldEC">SUA PARTICIPAÇÃO FOI CONFIRMADA!</h1>
         <div className="formCenter">
           <form className="formFields" method="POST" onSubmit={handleConfirmBanca}>
             <div className="formField">

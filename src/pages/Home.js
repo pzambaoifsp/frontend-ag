@@ -37,7 +37,7 @@ export function Home() {
 
   return (
     <div>
-      <Header name={"Calendário"}></Header>
+      <Header name={"Calendário de Bancas"}></Header>
 
       <div className="container align-center">
         <h1 className="center title-board">Bancas Cadastradas</h1>

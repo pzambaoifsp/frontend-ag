@@ -3,7 +3,6 @@ import { Home } from "../pages/Home";
 import SignInForm from "../pages/SignInForm";
 import Boards from "../pages/Boards";
 import Details from '../pages/Details';
-import Detailsbackup from '../pages/Detailsbackup';
 import ProtectedRoute from "../components/ProtectedRoute";
 import "../style/fontawesome/css/all.css";
 import UnprotectedRoute from "../components/UnprotectedRoute";
@@ -18,7 +17,7 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />}/>
-        <Route path="/confirmBanca" element={<ConfirmBanca />}/>
+        {/* <Route path="/confirmBanca" element={<ConfirmBanca />}/> implementação futura */}
         <Route path="/login" element={<UnprotectedRoute component={SignInForm} redirect="/boards"/>}/>
         <Route path="/signUp" element={<UnprotectedRoute component={SignUpForm} redirect="/boards"/>}/>
 
@@ -35,7 +34,6 @@ export function AppRoutes() {
         Detalhes da banca
         */
         }
-        <Route path="/detailsbackup" element={<ProtectedRoute component={Detailsbackup} redirect="/login"/>}/>
         <Route path="/details" element={<ProtectedRoute component={Details} redirect="/login"/>}/>
         <Route path="/banca-details/:id" element={<ProtectedRoute component={BancaDetailsById} redirect="/login"/>}/>
 

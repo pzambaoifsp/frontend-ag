@@ -54,10 +54,10 @@ function Boards() {
 
   return (
     <div>
-      <Header name={"Calendário"}></Header>
+      <Header name={"Calendário de Bancas"}></Header>
 
       <Container maxWidth={"xl"}>
-        <h1 className="center title-board">Bancas Cadastradas</h1>
+        <h1 className="center title-board mt-5">Bancas Cadastradas</h1>
         <AddBancaButton enabled={TokenUtils.isProfessorOrAbove(token)}></AddBancaButton>
 
         <table className="table table-hover table-boards">

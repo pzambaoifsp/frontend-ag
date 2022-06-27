@@ -102,10 +102,10 @@ function BancaDetailsById() {
 
   return (
     <div>
-      <Header name={"Calendário"}></Header>
+      <Header name={"Calendário de Bancas"}></Header>
       <div className="wrapper wapper--w900">
-        <div class="container">
-          <table class="table table-striped mt-5">
+        <div className="container">
+          <table className="table table-striped mt-5">
             <thead>
               <tr>
                 <th><font size='5' style={{ textTransform: 'uppercase'}}>{titulo}</font></th>
